@@ -1,0 +1,179 @@
+ion-app, ion-content {
+    background-color: #222428;
+}
+
+ion-header {
+    --background: #222428 !important;
+    background: #222428 !important;
+}
+
+ion-toolbar {
+    --background: #222428 !important;
+    background: #222428 !important;
+}
+
+ion-toolbar[color="primary"] {
+    --background: #222428 !important;
+    background: #222428 !important;
+    --color: rgb(72, 172, 255) !important;
+}
+
+ion-title {
+    --color: rgb(72, 172, 255) !important;
+    color: rgb(72, 172, 255) !important;
+}
+
+
+.Barra_ferramenta {
+  background-color: #222428;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom-width: 3px;
+    border-bottom-style: solid;
+    border-bottom-color: rgb(129, 200, 255);
+    display: flex;
+    
+   
+}
+
+.Tituto{
+    color: #969696;
+    text-align: center;
+    padding: 0;
+    
+}
+
+.agendar{
+    color: rgb(72, 172, 255);
+    text-align: center;
+    padding: 0;
+    
+}
+.hamburg, .voltar{
+    color: #ffffff;
+    
+    
+}
+
+
+.menu, .voltar{
+    font-size: 50px;
+    
+}
+
+.cabeçalho{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+   
+    
+}
+
+.voltar{
+    width: 30px;
+    padding-right: 12px;
+}
+
+.agendar{
+    font-size: 15px;
+    padding: 8px 16px;
+    background-color: #222428;
+    --background: transparent !important;
+    --background-activated: transparent !important;
+    --background-focused: transparent !important;
+    --background-hover: transparent !important;
+    border-radius: 32px;
+    border: 2px solid rgb(72, 172, 255);
+}
+ion-app, ion-content {
+    --background: #222428 !important;
+}
+ion-card-content, ion-card{
+    background-color: #222428;
+    border-radius: 12px;
+    padding: 0;
+    margin: 8px;
+}
+
+.legenda, .Titulo-h3{
+    color: #969696;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.Titulo-h3{
+    text-align: center;
+}
+ion-button{
+    display: flex;
+    justify-content: center;
+}
+
+.dias-Semana{
+    color: #969696;
+    border-radius: 32px;
+    border: 2px solid rgb(68, 188, 72);
+    padding: 8px 16px;
+}
+
+.titulo-calendario {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+.calendario-icon {
+    font-size: 42px;
+    color: rgb(72, 172, 255);
+}
+
+.botao-data {
+    color: rgb(72, 172, 255);
+    font-size: 16px;
+    --color: rgb(72, 172, 255);
+    --background: transparent !important;
+    --background-activated: transparent !important;
+    --background-focused: transparent !important;
+    --background-hover: transparent !important;
+    border-radius: 32px;
+    border: 2px solid rgb(72, 172, 255);
+    padding: 8px 16px;
+}
+
+.calendario-popup {
+    background-color: #222428;
+    border-radius: 16px;
+    margin: 5px 0;
+    border: 2px solid rgb(72, 172, 255);
+    padding: 16px;
+    --background: #222428;
+    --color: rgb(72, 172, 255);
+    --ion-color-primary: rgb(72, 172, 255);
+    --ion-color-primary-rgb: 72, 172, 255;
+    --ion-color-primary-contrast: #ffffff;
+    --ion-color-primary-contrast-rgb: 255, 255, 255;
+    --ion-color-primary-shade: rgb(63, 151, 224);
+    --ion-color-primary-tint: rgb(129, 200, 255);
+}
+
+.calendario-popup ion-datetime {
+    --background: #222428;
+    --color: rgb(72, 172, 255);
+    --ion-color-step-50: rgba(72, 172, 255, 0.1);
+    --ion-color-step-100: rgba(72, 172, 255, 0.2);
+    --ion-color-step-150: rgba(72, 172, 255, 0.3);
+    border-radius: 12px;
+}
+
+.calendario-popup .datetime-button {
+    border-radius: 8px;
+    color: rgb(72, 172, 255);
+}
+
+.calendario-popup .datetime-button.datetime-button-active {
+    background-color: rgb(72, 172, 255);
+    color: #ffffff;
+    border-radius: 8px;
+}
