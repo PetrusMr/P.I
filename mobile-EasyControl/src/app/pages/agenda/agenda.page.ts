@@ -82,4 +82,10 @@ export class AgendaPage implements OnInit {
   voltar() {
     this.router.navigate(['/home']);
   }
+
+  irParaHorarios(dia: any) {
+    const ano = new Date().getFullYear();
+    const dataCompleta = `${dia.data}/${ano}`;
+    this.router.navigate(['/horarios'], { queryParams: { data: dataCompleta } });
+  }
 }
