@@ -1,0 +1,28 @@
+<app-base-page pageTitle="Agendar" [showBackButton]="true" backRoute="/agenda">
+  <ion-card>
+    <ion-card-content>
+      <div class="horarios-container">
+        <div class="icone-relogio">
+          <ion-icon name="time-outline" class="relogio-icon"></ion-icon>
+        </div>
+        
+        <p class="legenda">Períodos para agendar</p>
+        <p class="data">{{dataSelecionada}}</p>
+        
+        <div class="periodos">
+          <ion-button class="periodo-btn manha" (click)="selecionarPeriodo('manha')">
+            Manhã
+          </ion-button>
+          
+          <ion-button class="periodo-btn tarde" (click)="selecionarPeriodo('tarde')">
+            Tarde
+          </ion-button>
+          
+          <ion-button class="periodo-btn noite" (click)="selecionarPeriodo('noite')">
+            Noite
+          </ion-button>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</app-base-page>
