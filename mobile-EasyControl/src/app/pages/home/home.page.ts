@@ -1,12 +1,50 @@
 import { Component } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/angular/standalone';
-
+import {IonApp, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonMenu, IonMenuButton, IonIcon, IonActionSheet } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { atOutline, barcode, calendar, camera, image, logoFacebook, logoInstagram, logoTiktok, logoWhatsapp } from 'ionicons/icons';
+import { Router } from '@angular/router';
+ 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent],
+  imports: [ IonApp, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenu, IonButton, IonMenuButton, IonIcon, IonActionSheet],
 })
 export class HomePage {
-  constructor() {}
+  constructor(private router: Router) {
+    addIcons({camera, calendar, barcode, image, logoFacebook, logoInstagram, logoTiktok, logoWhatsapp })
+  }
+
+  irParaAgenda() {
+    this.router.navigate(['/agenda']);
+  }
+
+  isActionSheetOpen = false;
+  public actionSheetButtons = [
+    {
+      text: 'Delete',
+      role: 'destructive',
+      data: {
+        action: 'delete',
+      },
+    },
+    {
+      text: 'Share',
+      data: {
+        action: 'share',
+      },
+    },
+    {
+      text: 'Cancel',
+      role: 'cancel',
+      data: {
+        action: 'cancel',
+      },
+    },
+  ];
+ 
+  setOpen(isOpen: boolean) {
+    this.isActionSheetOpen = isOpen;
+  }
+
 }

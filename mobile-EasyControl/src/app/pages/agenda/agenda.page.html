@@ -1,13 +1,58 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>agenda</ion-title>
+  <ion-toolbar class="Barra_ferramenta">
+
+    <ion-menu side="start" menuId="first" contentId="main-content">
+    </ion-menu>
+    <div class="qualquer_uma_classe" id="main-content">
+      <ion-header>
+        <ion-toolbar>
+          <div class="cabeçalho">
+          <ion-buttons class="hamburg">
+            <ion-menu-button class="menu" id="main-content"></ion-menu-button>
+          </ion-buttons>
+          <ion-title class="Tituto">
+                Agendar
+            </ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="voltar()">
+                <ion-icon class="voltar" name="arrow-undo"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </div>
+        </ion-toolbar>
+      </ion-header>
+    </div>
   </ion-toolbar>
 </ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">agenda</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-card>
+    <ion-card-content>
+      <div class="titulo-calendario">
+        <ion-icon name="calendar-outline" class="calendario-icon"></ion-icon>
+        <ion-button fill="clear" class="botao-data" (click)="toggleCalendario()">
+          {{dataAtual}}
+        </ion-button>
+      </div>
+      
+      <ion-datetime 
+        *ngIf="mostrarCalendario" 
+        presentation="date" 
+        class="calendario-popup"
+        [(ngModel)]="selectedDate"
+        (ionChange)="onDateChange($event)">
+      </ion-datetime>
+      <h3 class="Titulo-h3">Dias para agendar</h3>
+      <ion-item *ngFor="let dia of diasSemana" [color]="dia.cor">
+        <ion-label class="dias-Semana">{{dia.nome}} - {{dia.data}} Ver períodos</ion-label>
+      </ion-item>
+      
+      <div class="legenda">
+        <div><ion-icon name="ellipse" color="success"></ion-icon> Horários Disponíveis</div>
+        <div><ion-icon name="ellipse" color="warning"></ion-icon> Horários Parcialmente Disponíveis</div>
+        <div><ion-icon name="ellipse" color="danger"></ion-icon> Horários Indisponíveis</div>
+      </div>
+      
+      <ion-button expand="block" class="agendar">Sua Agenda</ion-button>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
