@@ -1,0 +1,64 @@
+ion-app, ion-content {
+    background-color: #222428;
+    --background: #222428 !important;
+}
+
+ion-card-content, ion-card {
+    background-color: #222428;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 8px;
+    border: 2px solid rgb(72, 172, 255);
+}
+
+.horarios-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.icone-relogio {
+    margin-bottom: 16px;
+}
+
+.relogio-icon {
+    font-size: 48px;
+    color: rgb(72, 172, 255) !important;
+    --color: rgb(72, 172, 255) !important;
+}
+
+.legenda {
+    color: #969696;
+    margin: 8px 0;
+    font-size: 16px;
+}
+
+.data {
+    color: #969696;
+    margin: 8px 0 24px 0;
+    font-size: 14px;
+}
+
+.periodos {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+.periodo-btn {
+    font-size: 16px;
+    padding: 12px 24px;
+    border-radius: 32px;
+    width: 100%;
+    --background: transparent !important;
+    --background-activated: transparent !important;
+    --background-focused: transparent !important;
+    --background-hover: transparent !important;
+}
+
+.manha, .tarde, .noite {
+    color: rgb(68, 188, 72);
+    border: 2px solid rgb(68, 188, 72);
+}
