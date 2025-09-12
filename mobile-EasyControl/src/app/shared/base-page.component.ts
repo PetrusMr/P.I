@@ -37,6 +37,14 @@ import { CommonModule } from '@angular/common';
       --color: rgb(72, 172, 255) !important;
       color: rgb(72, 172, 255) !important;
     }
+    ion-button {
+      --color: #ffffff !important;
+      color: #ffffff !important;
+    }
+    ion-icon {
+      --color: #ffffff !important;
+      color: #ffffff !important;
+    }
   `],
   imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonMenuButton, IonIcon, CommonModule]
 })
