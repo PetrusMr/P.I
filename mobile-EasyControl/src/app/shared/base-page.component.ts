@@ -2,6 +2,8 @@ import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonMenuButton, IonIcon } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
+import { addIcons } from 'ionicons';
+import { arrowUndo } from 'ionicons/icons';
 
 @Component({
   selector: 'app-base-page',
@@ -37,11 +39,7 @@ import { CommonModule } from '@angular/common';
       --color: rgb(72, 172, 255) !important;
       color: rgb(72, 172, 255) !important;
     }
-    ion-button {
-      --color: #ffffff !important;
-      color: #ffffff !important;
-    }
-    ion-icon {
+    ion-button ion-icon {
       --color: #ffffff !important;
       color: #ffffff !important;
     }
@@ -53,7 +51,9 @@ export class BasePageComponent {
   @Input() showBackButton: boolean = false;
   @Input() backRoute: string = '/home';
 
-  constructor(protected router: Router) {}
+  constructor(protected router: Router) {
+    addIcons({ arrowUndo });
+  }
 
   goBack() {
     this.router.navigate([this.backRoute]);

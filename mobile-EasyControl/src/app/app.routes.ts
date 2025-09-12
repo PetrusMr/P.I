@@ -21,6 +21,10 @@ export const routes: Routes = [
     path: 'horarios',
     loadComponent: () => import('./pages/horarios/horarios.page').then( m => m.HorariosPage)
   },
+  {
+    path: 'horarios',
+    loadComponent: () => import('./pages/horarios/horarios.page').then( m => m.HorariosPage)
+  },
 
 
 
