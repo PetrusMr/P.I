@@ -1,13 +1,27 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>login</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true" class="fundo">
+  <div class="login-container">
+ 
+    <!-- Ícone da câmera -->
+    <ion-icon name="person-outline" ></ion-icon>
+ 
+    <!-- Input usuário -->
+    <div class="input-box">
+      <ion-input placeholder="Usuario"></ion-input>
+    <ion-icon name="person-outline" class="input-icon"></ion-icon>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">login</ion-title>
-    </ion-toolbar>
-  </ion-header>
+    </div>
+ 
+    <!-- Input senha -->
+    <div class="input-box">
+      <ion-input type="password" placeholder="Senha"></ion-input>
+      <img src="assets/icon/ver-senha.png" alt="senha" class="input-icon" />
+    </div>
+ 
+    <!-- Botão entrar -->
+    <ion-button expand="block" (click)="IrParaHome()" class="login-button">ENTRAR</ion-button>
+ 
+    <!-- Links -->
+    <a href="#" class="links">Esqueci minha senha</a>
+    <a href="#" class="link">Termo de Uso</a>
+  </div>
 </ion-content>

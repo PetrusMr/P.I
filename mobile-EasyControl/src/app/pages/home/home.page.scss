@@ -1,27 +1,121 @@
-#container {
-  text-align: center;
-
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
-}
-
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
+*{
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
 }
-
-#container a {
-  text-decoration: none;
+ion-menu::part(backdrop) {
+  background-color: #2eb2f1;
+}
+ 
+ion-menu::part(container) {
+  border-radius: 0 20px 20px 0;
+  box-shadow: 4px 0px 16px rgba(0, 0, 0, 0.2);
+}
+ 
+ion-menu::part(content) {
+  background-color: #262627;
+ 
+}
+ 
+ion-menu::part(title) {
+  color: #2eb2f1;
+  font-size: 24px;
+  font-weight: bold;
+}
+ 
+ 
+ 
+ion-icon {
+  width: 50px;
+  height: 50px;
+  --color: #2eb2f1;
+}
+ 
+ion-title {
+  --color: #2eb2f1;
+  font-size: 24px;
+  font-weight: bold;
+}
+ 
+h2 {
+  color: #fff;
+  text-align: center;
+}
+ 
+ion-content {
+  --background: #262627;
+}
+ 
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+ 
+ion-menu, ion-header, ion-toolbar {
+  --background: #262627;
+  border-bottom-style: solid;
+  border-radius: 5px;
+  border-width: 1px;
+  border-color: #2eb2f1;
+  box-shadow:  4px 0px 16px rgba(0, 0, 0, 0.562);
+}
+ 
+.redes-sociais {
+  box-shadow:  4px 0px 16px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  border-width: 10px;
+  border-color: #323334;
+  border-style: solid;
+  width: 300px;
+  height: 100px;
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+  align-items: center;
+  justify-content: center;
+}
+ 
+.carregar {
+  width: 300px;
+  height: 100px;
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border-width: 10px;
+  border-color: #323334;
+  border-style: solid;
+}
+ 
+.icones {
+  display: flex;
+  gap: 200px;
+  margin-top: 20px;
+  align-items: center;
+  justify-content: space-between;
+}
+ 
+ion-menu-button {
+  --background: transparent;
+  --color: #2eb2f1;
+  font-size: 100px;
+}
+ 
+.carregar {
+  width: 300px;
+  height: 200px;
+  margin-bottom: 20px;
+}
+ 
+.ionContent {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
 }
