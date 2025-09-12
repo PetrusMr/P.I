@@ -6,6 +6,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 100vh;
+  --keyboard-offset: 0px;
 }
  
 .login-container {
@@ -13,8 +15,12 @@
   flex-direction: column;
   align-items: center;
   width: 80%;
-  margin: auto;
+  margin: 0 auto;
   color: white;
+  justify-content: flex-start;
+  min-height: 100%;
+  padding: 60px 0 40px 0;
+  position: relative;
 }
  
 .login-icon {
@@ -32,50 +38,104 @@
 ion-input {
   --background: transparent;
   --padding-start: 15px;
+  --padding-end: 45px;
   --color: white;
+  --highlight-color: transparent;
+  --highlight-color-focused: transparent;
+  --highlight-color-valid: transparent;
+  --highlight-color-invalid: transparent;
+  --show-clear-button: false;
+  --show-password-toggle: false;
   border: 1px solid #444;
   border-radius: 25px;
   padding: 10px;
   width: 100%;
+  transition: border-color 0.3s ease;
+}
+
+ion-input .native-input {
+  padding-right: 45px !important;
+}
+
+ion-input .input-bottom .helper-text,
+ion-input .input-bottom .counter,
+ion-input .input-bottom .error-text {
+  display: none;
+}
+
+ion-input[type="password"] .input-wrapper .input-clear-icon,
+ion-input .input-clear-icon {
+  display: none !important;
+}
+
+ion-input[type="password"] .input-wrapper .input-password-toggle,
+ion-input .input-wrapper .input-password-toggle,
+ion-input .input-password-toggle {
+  position: fixed !important;
+  color: #2eb2f1 !important;
+  font-size: 20px !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: 1000 !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.input-box:has(ion-input[type="password"]) .input-wrapper .input-password-toggle {
+  position: absolute !important;
+  right: 15px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+
+ion-input.has-focus {
+  box-shadow: 0 0 20px rgba(46, 178, 241, 0.8);
+  --highlight-color-focused: transparent;
 }
  
 .input-icon {
   position: absolute;
-  right: 14px;
+  right: 15px;
   top: 50%;
   transform: translateY(-50%);
   color: #aaa;
   font-size: 20px;
-  width: 50px;
-  height: 50px;
 }
  
 .login-button {
   --background: #2eb2f1; /* azul igual da imagem */
   --border-radius: 25px;
   font-weight: bold;
-  margin-top: 10px;
+  margin-top: 30px;
+  margin-bottom: 20px;
   width: 100%;
 }
  
 .link {
   color: #2eb2f1;
   font-size: 14px;
-  margin-top: 200px;
   text-decoration: none;
 }
  
 .links {
   color: #2eb2f1;
   font-size: 14px;
-  margin-top: 12px;
+  margin-top: auto;
+  margin-bottom: 10px;
   text-decoration: none;
 }
  
 .login-icon {
   width: 60px;
   height: 60px;
-  margin-bottom: 30px;
-  margin-top: 60px;
+  margin-bottom: 40px;
   color: white;
+}
+
+.camera-icon {
+  font-size: 120px;
+  color: #6c6d6e !important;
+  --color: #323334 !important;
+  margin-bottom: 40px;
 }

@@ -84,8 +84,12 @@ export class AgendaPage implements OnInit {
   }
 
   irParaHorarios(dia: any) {
-    const ano = new Date().getFullYear();
-    const dataCompleta = `${dia.data}/${ano}`;
-    this.router.navigate(['/horarios'], { queryParams: { data: dataCompleta } });
+    console.log('Clicou no dia:', dia);
+    this.router.navigate(['/horarios'], {
+      queryParams: {
+        dia: dia.nome,
+        data: dia.data
+      }
+    });
   }
 }

@@ -23,7 +23,9 @@ export class HorariosPage implements OnInit {
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
-      if (params['data']) {
+      if (params['dia'] && params['data']) {
+        this.dataSelecionada = `${params['dia']} - ${params['data']}`;
+      } else if (params['data']) {
         this.dataSelecionada = `Dia ${params['data']}`;
       }
     });
