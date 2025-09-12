@@ -82,4 +82,14 @@ export class AgendaPage implements OnInit {
   voltar() {
     this.router.navigate(['/home']);
   }
+
+  irParaHorarios(dia: any) {
+    console.log('Clicou no dia:', dia);
+    this.router.navigate(['/horarios'], {
+      queryParams: {
+        dia: dia.nome,
+        data: dia.data
+      }
+    });
+  }
 }

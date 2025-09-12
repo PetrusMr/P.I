@@ -2,23 +2,22 @@
   <div class="login-container">
  
     <!-- Ícone da câmera -->
-    <ion-icon name="person-outline" ></ion-icon>
+    <ion-icon name="camera-outline" class="camera-icon"></ion-icon>
  
     <!-- Input usuário -->
     <div class="input-box">
-      <ion-input placeholder="Usuario"></ion-input>
-    <ion-icon name="person-outline" class="input-icon"></ion-icon>
-
+      <ion-input placeholder="Usuario" [(ngModel)]="usuario"></ion-input>
+      <ion-icon name="person-outline" class="input-icon"></ion-icon>
     </div>
  
     <!-- Input senha -->
     <div class="input-box">
-      <ion-input type="password" placeholder="Senha"></ion-input>
-      <img src="assets/icon/ver-senha.png" alt="senha" class="input-icon" />
+      <ion-input type="password" placeholder="Senha" [(ngModel)]="senha" (ionInput)="onSenhaInput()"></ion-input>
+      <ion-icon name="eye-outline" class="input-icon"></ion-icon>
     </div>
  
     <!-- Botão entrar -->
-    <ion-button expand="block" (click)="IrParaHome()" class="login-button">ENTRAR</ion-button>
+    <ion-button expand="block" (click)="login()" class="login-button">ENTRAR</ion-button>
  
     <!-- Links -->
     <a href="#" class="links">Esqueci minha senha</a>
