@@ -74,6 +74,21 @@ ion-title {
     padding-right: 12px;
 }
 
+.voltar ion-icon {
+    color: #ffffff !important;
+    --color: #ffffff !important;
+}
+
+ion-button .voltar {
+    color: #ffffff !important;
+    --color: #ffffff !important;
+}
+
+ion-buttons ion-icon[name="arrow-undo"] {
+    color: #ffffff !important;
+    --color: #ffffff !important;
+}
+
 .agendar{
     font-size: 15px;
     padding: 8px 16px;
@@ -93,6 +108,11 @@ ion-card-content, ion-card{
     border-radius: 12px;
     padding: 0;
     margin: 8px;
+}
+
+ion-item {
+    --background: #222428 !important;
+    background: #222428 !important;
 }
 
 .legenda, .Titulo-h3{
@@ -126,7 +146,8 @@ ion-button{
 
 .calendario-icon {
     font-size: 42px;
-    color: rgb(72, 172, 255);
+    color: rgb(72, 172, 255) !important;
+    --color: rgb(72, 172, 255) !important;
 }
 
 .botao-data {
