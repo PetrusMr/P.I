@@ -1,0 +1,90 @@
+.menu-content {
+  --background: #2c2c2c;
+}
+
+.menu-list {
+  background: #2c2c2c;
+  padding: 0;
+}
+
+.menu-item {
+  --background: transparent;
+  --color: #4a9eff;
+  --border-color: #4a9eff;
+  border: 2px solid #4a9eff;
+  border-radius: 12px;
+  margin: 6px 16px;
+  --padding-start: 16px;
+}
+
+.menu-item ion-label {
+  color: #4a9eff !important;
+}
+
+.menu-item ion-icon {
+  color: #4a9eff !important;
+  --color: #4a9eff !important;
+}
+
+.menu-item:hover {
+  --background: rgba(74, 158, 255, 0.1);
+}
+
+.menu-icon {
+  color: #4a9eff !important;
+  --color: #4a9eff !important;
+  margin-right: 12px;
+}
+
+.menu-sair {
+  margin-top: auto;
+  position: absolute;
+  bottom: 20px;
+  left: 16px;
+  right: 16px;
+  width: calc(100% - 32px);
+}
+
+ion-menu {
+  --width: 280px;
+}
+
+ion-menu ion-toolbar {
+  --background: #2c2c2c;
+  background: #2c2c2c;
+}
+
+ion-menu ion-title {
+  --color: #4a9eff;
+  color: #4a9eff;
+}
+
+ion-menu ion-item ion-icon {
+  color: #4a9eff !important;
+  --color: #4a9eff !important;
+}
+
+ion-menu .menu-icon {
+  color: #4a9eff !important;
+  --color: #4a9eff !important;
+}
+
+ion-menu ion-icon {
+  color: #4a9eff !important;
+  --color: #4a9eff !important;
+}
+
+ion-menu ion-item ion-label {
+  color: #4a9eff !important;
+  --color: #4a9eff !important;
+}
+
+ion-menu .menu-item ion-label {
+  color: #4a9eff !important;
+  --color: #4a9eff !important;
+}
+
+ion-menu ion-label {
+  color: #4a9eff !important;
+  --color: #4a9eff !important;
+}

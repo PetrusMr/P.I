@@ -1,30 +1,4 @@
-<ion-header [translucent]="true">
-  <ion-toolbar class="Barra_ferramenta">
-
-    <ion-menu side="start" menuId="first" contentId="main-content">
-    </ion-menu>
-    <div class="qualquer_uma_classe" id="main-content">
-      <ion-header>
-        <ion-toolbar>
-          <div class="cabeçalho">
-          <ion-buttons class="hamburg">
-            <ion-menu-button class="menu" id="main-content"></ion-menu-button>
-          </ion-buttons>
-          <ion-title class="Tituto">
-                Agendar
-            </ion-title>
-            <ion-buttons slot="end">
-              <ion-button (click)="voltar()">
-                <ion-icon class="voltar" name="arrow-undo"></ion-icon>
-              </ion-button>
-            </ion-buttons>
-          </div>
-        </ion-toolbar>
-      </ion-header>
-    </div>
-  </ion-toolbar>
-</ion-header>
-<ion-content [fullscreen]="true">
+<app-base-page pageTitle="Agendar" [showBackButton]="true" backRoute="/home">
   <ion-card>
     <ion-card-content>
       <div class="titulo-calendario">
@@ -55,4 +29,4 @@
       <ion-button expand="block" class="agendar">Sua Agenda</ion-button>
     </ion-card-content>
   </ion-card>
-</ion-content>
+</app-base-page>
