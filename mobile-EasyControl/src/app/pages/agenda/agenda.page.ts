@@ -1,20 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonMenu,
-  IonMenuButton, IonButtons, IonIcon, IonButton, IonCard, IonCardContent,
-  IonItem, IonLabel, IonDatetime } from '@ionic/angular/standalone';
+import { IonIcon, IonButton, IonCard, IonCardContent, IonItem, IonLabel, IonDatetime } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
 import { arrowUndo, ellipse, calendarOutline } from 'ionicons/icons';
 import { Router } from '@angular/router';
+import { BasePageComponent } from '../../shared/base-page.component';
 
 
 @Component({
   selector: 'app-agenda',
   templateUrl: 'agenda.page.html',
   styleUrls: ['agenda.page.scss'],
-  imports: [IonHeader, IonIcon, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, 
-           IonMenu, IonMenuButton, IonCard, IonCardContent, IonItem, IonLabel, IonDatetime, CommonModule, FormsModule],
+  imports: [BasePageComponent, IonIcon, IonButton, IonCard, IonCardContent, IonItem, IonLabel, IonDatetime, CommonModule, FormsModule],
 })
 export class AgendaPage implements OnInit {
   selectedDate = new Date().toISOString();
