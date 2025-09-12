@@ -25,13 +25,80 @@
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
+/* Global dark theme */
+ion-app {
+  --background: #222428 !important;
+  background: #222428 !important;
+}
 
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+ion-content {
+  --background: #222428 !important;
+  background: #222428 !important;
+}
+
+ion-item {
+  --background: #222428 !important;
+  background: #222428 !important;
+}
+
+ion-list {
+  --background: #222428 !important;
+  background: #222428 !important;
+}
+
+body {
+  --background: #222428 !important;
+  background: #222428 !important;
+}
+
+ion-icon {
+  --color: rgb(72, 172, 255) !important;
+  color: rgb(72, 172, 255) !important;
+}
+
+ion-menu-button {
+  --color: #ffffff !important;
+  color: #ffffff !important;
+}
+
+ion-menu * {
+  color: #4a9eff !important;
+  --color: #4a9eff !important;
+}
+
+ion-menu ion-icon {
+  color: #4a9eff !important;
+  --color: #4a9eff !important;
+}
+
+ion-menu ion-label {
+  color: #4a9eff !important;
+  --color: #4a9eff !important;
+}
+
+ion-menu ion-item {
+  border: 2px solid #4a9eff !important;
+  border-radius: 12px !important;
+  margin: 6px 16px !important;
+  --background: transparent !important;
+  background: transparent !important;
+}
+
+ion-menu .menu-sair {
+  position: absolute !important;
+  bottom: 20px !important;
+  left: 16px !important;
+  right: 16px !important;
+  width: calc(100% - 32px) !important;
+  margin: 0 !important;
+}
+
+app-agenda ion-icon[name="arrow-undo"] {
+  color: #ffffff !important;
+  --color: #ffffff !important;
+}
+
+app-agenda ion-button ion-icon {
+  color: #ffffff !important;
+  --color: #ffffff !important;
+}
