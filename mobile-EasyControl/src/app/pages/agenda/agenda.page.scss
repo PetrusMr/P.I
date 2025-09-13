@@ -132,8 +132,28 @@ ion-button{
 .dias-Semana{
     color: #969696;
     border-radius: 32px;
-    border: 2px solid rgb(68, 188, 72);
     padding: 8px 16px;
+}
+
+.dia-success {
+    --background: #222428 !important;
+    background: #222428 !important;
+    border: 2px solid rgb(68, 188, 72) !important;
+    border-radius: 24px;
+}
+
+.dia-warning {
+    --background: #222428 !important;
+    background: #222428 !important;
+    border: 2px solid rgb(255, 193, 7) !important;
+    border-radius: 24px;
+}
+
+.dia-danger {
+    --background: #222428 !important;
+    background: #222428 !important;
+    border: 2px solid rgb(245, 61, 61) !important;
+    border-radius: 24px;
 }
 
 .titulo-calendario {

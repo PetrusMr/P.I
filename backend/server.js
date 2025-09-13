@@ -40,6 +40,54 @@ app.post('/api/login', (req, res) => {
   });
 });
 
+// Salvar agendamento
+app.post('/api/agendamentos', (req, res) => {
+  const { nome, data, horario } = req.body;
+  
+  // Primeiro verifica se já existe agendamento para essa data e horário
+  const checkQuery = 'SELECT * FROM agendamentos WHERE data = ? AND horario = ?';
+  
+  db.query(checkQuery, [data, horario], (err, results) => {
+    if (err) {
+      console.error('Erro ao verificar agendamento:', err);
+      return res.status(500).json({ success: false, message: 'Erro interno do servidor' });
+    }
+    
+    if (results.length > 0) {
+      return res.status(400).json({ success: false, message: 'Horário já está ocupado' });
+    }
+    
+    // Se não existe, insere o novo agendamento
+    const insertQuery = 'INSERT INTO agendamentos (nome, data, horario) VALUES (?, ?, ?)';
+    
+    db.query(insertQuery, [nome, data, horario], (err, result) => {
+      if (err) {
+        console.error('Erro ao salvar agendamento:', err);
+        return res.status(500).json({ success: false, message: 'Erro interno do servidor' });
+      }
+      
+      res.json({ success: true, message: 'Agendamento salvo com sucesso' });
+    });
+  });
+});
+
+// Verificar horários ocupados
+app.get('/api/agendamentos/:data', (req, res) => {
+  const { data } = req.params;
+  
+  const query = 'SELECT horario FROM agendamentos WHERE data = ?';
+  
+  db.query(query, [data], (err, results) => {
+    if (err) {
+      console.error('Erro ao buscar agendamentos:', err);
+      return res.status(500).json({ success: false, message: 'Erro interno do servidor' });
+    }
+    
+    const horarios = results.map(row => row.horario);
+    res.json({ success: true, horarios });
+  });
+});
+
 app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
 });

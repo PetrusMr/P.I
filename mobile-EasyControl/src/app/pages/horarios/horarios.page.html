@@ -10,15 +10,30 @@
         <p class="data">{{dataSelecionada}}</p>
         
         <div class="periodos">
-          <ion-button class="periodo-btn manha" (click)="selecionarPeriodo('manha')">
+          <ion-button 
+            class="periodo-btn" 
+            [class.disponivel]="periodos.manha.disponivel" 
+            [class.ocupado]="periodos.manha.ocupado"
+            [disabled]="!periodos.manha.disponivel"
+            (click)="selecionarPeriodo('manha')">
             Manhã
           </ion-button>
           
-          <ion-button class="periodo-btn tarde" (click)="selecionarPeriodo('tarde')">
+          <ion-button 
+            class="periodo-btn" 
+            [class.disponivel]="periodos.tarde.disponivel" 
+            [class.ocupado]="periodos.tarde.ocupado"
+            [disabled]="!periodos.tarde.disponivel"
+            (click)="selecionarPeriodo('tarde')">
             Tarde
           </ion-button>
           
-          <ion-button class="periodo-btn noite" (click)="selecionarPeriodo('noite')">
+          <ion-button 
+            class="periodo-btn" 
+            [class.disponivel]="periodos.noite.disponivel" 
+            [class.ocupado]="periodos.noite.ocupado"
+            [disabled]="!periodos.noite.disponivel"
+            (click)="selecionarPeriodo('noite')">
             Noite
           </ion-button>
         </div>
