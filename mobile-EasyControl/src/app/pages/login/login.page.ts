@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonButton ,IonInput, IonIcon, } from '@ionic/angular/standalone';
+import { IonContent, IonButton ,IonInput, IonIcon, } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { person, personCircle, eyeOutline, personOutline, cameraOutline } from 'ionicons/icons';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
@@ -11,8 +11,7 @@ import { AlertController } from '@ionic/angular';
   selector: 'app-login',
   templateUrl: 'login.page.html',
   styleUrls: ['login.page.scss'],
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonButton,RouterLink,
-     IonInput, IonIcon, FormsModule
+  imports: [IonContent, IonButton, IonInput, IonIcon, FormsModule
   ],
 })
 export class LoginPage {
