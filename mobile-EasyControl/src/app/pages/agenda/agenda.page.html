@@ -16,14 +16,14 @@
         (ionChange)="onDateChange($event)">
       </ion-datetime>
       <h3 class="Titulo-h3">Dias para agendar</h3>
-      <ion-item *ngFor="let dia of diasSemana" [color]="dia.cor" button="true" (click)="irParaHorarios(dia)">
+      <ion-item *ngFor="let dia of diasSemana" [class]="'dia-' + dia.cor" button="true" (click)="irParaHorarios(dia)">
         <ion-label class="dias-Semana">{{dia.nome}} - {{dia.data}} Ver períodos</ion-label>
       </ion-item>
       
       <div class="legenda">
-        <div><ion-icon name="ellipse" color="success"></ion-icon> Horários Disponíveis</div>
-        <div><ion-icon name="ellipse" color="warning"></ion-icon> Horários Parcialmente Disponíveis</div>
-        <div><ion-icon name="ellipse" color="danger"></ion-icon> Horários Indisponíveis</div>
+        <div><ion-icon name="ellipse" color="success"></ion-icon> Todos Disponíveis</div>
+        <div><ion-icon name="ellipse" color="warning"></ion-icon> Parcialmente Ocupado</div>
+        <div><ion-icon name="ellipse" color="danger"></ion-icon> Todos Ocupados</div>
       </div>
       
       <ion-button expand="block" class="agendar">Sua Agenda</ion-button>

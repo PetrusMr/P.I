@@ -6,6 +6,7 @@ import { addIcons } from 'ionicons';
 import { arrowUndo, ellipse, calendarOutline } from 'ionicons/icons';
 import { Router } from '@angular/router';
 import { BasePageComponent } from '../../shared/base-page.component';
+import { AgendamentoService } from '../../services/agendamento.service';
 
 
 @Component({
@@ -23,6 +24,10 @@ export class AgendaPage implements OnInit {
   ngOnInit() {
     this.gerarDiasSemana();
     this.atualizarDataAtual();
+  }
+
+  ionViewWillEnter() {
+    this.verificarDisponibilidade();
   }
 
   atualizarDataAtual(dataBase?: string) {
@@ -67,16 +72,42 @@ export class AgendaPage implements OnInit {
       
       const dia = data.getDate().toString().padStart(2, '0');
       const mes = (data.getMonth() + 1).toString().padStart(2, '0');
+      const ano = data.getFullYear();
       
       this.diasSemana.push({
         nome: diasNomes[data.getDay()],
-        data: `${dia}/${mes}`
+        data: `${dia}/${mes}`,
+        dataCompleta: `${ano}-${mes}-${dia}`,
+        cor: 'success'
       });
     }
+    
+    this.verificarDisponibilidade();
   }
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private agendamentoService: AgendamentoService) {
     addIcons({ arrowUndo, ellipse, calendarOutline });
+  }
+
+  verificarDisponibilidade() {
+    this.diasSemana.forEach(dia => {
+      this.agendamentoService.verificarHorariosOcupados(dia.dataCompleta).subscribe({
+        next: (response) => {
+          const horariosOcupados = response.success ? response.horarios.length : 0;
+          
+          if (horariosOcupados === 0) {
+            dia.cor = 'success';
+          } else if (horariosOcupados === 3) {
+            dia.cor = 'danger';
+          } else {
+            dia.cor = 'warning';
+          }
+        },
+        error: () => {
+          dia.cor = 'success';
+        }
+      });
+    });
   }
 
   voltar() {
@@ -88,7 +119,7 @@ export class AgendaPage implements OnInit {
     this.router.navigate(['/horarios'], {
       queryParams: {
         dia: dia.nome,
-        data: dia.data
+        data: dia.dataCompleta
       }
     });
   }
