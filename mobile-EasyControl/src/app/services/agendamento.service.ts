@@ -21,4 +21,12 @@ export class AgendamentoService {
   verificarHorariosOcupados(data: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/agendamentos/${data}`);
   }
+
+  buscarAgendamentosPorUsuario(nome: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/agendamentos/usuario/${nome}`);
+  }
+
+  cancelarAgendamento(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/agendamentos/${id}`);
+  }
 }
