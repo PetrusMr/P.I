@@ -1,0 +1,30 @@
+<app-base-page pageTitle="Agendados" [showBackButton]="true" backRoute="/agenda">
+  <ion-card>
+    <ion-card-content>
+      <div class="agenda-container">
+        <div class="icone-relogio">
+          <ion-icon name="time-outline" class="relogio-icon"></ion-icon>
+        </div>
+        
+        <p class="titulo-agendamentos">Seus agendamentos:</p>
+        
+        <div class="agendamentos-lista" *ngIf="agendamentos.length > 0">
+          <div class="agendamentos-scroll">
+            <div *ngFor="let agendamento of agendamentos" class="agendamento-item">
+              <div class="agendamento-info">
+                {{agendamento.diaSemana}} - {{agendamento.data}} - {{agendamento.periodo}}
+              </div>
+              <ion-button class="cancelar-btn" (click)="cancelarAgendamento(agendamento)">
+                Cancelar Agendamento
+              </ion-button>
+            </div>
+          </div>
+        </div>
+        
+        <div *ngIf="agendamentos.length === 0" class="sem-agendamentos">
+          <p>Nenhum agendamento encontrado</p>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</app-base-page>
