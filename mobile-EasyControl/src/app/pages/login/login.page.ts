@@ -36,6 +36,7 @@ export class LoginPage {
     this.authService.login(this.usuario, this.senha).subscribe({
       next: (response) => {
         if (response.success) {
+          localStorage.setItem('usuarioLogado', this.usuario);
           this.router.navigateByUrl('/home');
         }
       },
