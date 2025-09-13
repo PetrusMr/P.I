@@ -88,6 +88,38 @@ app.get('/api/agendamentos/:data', (req, res) => {
   });
 });
 
+// Buscar agendamentos por usuário
+app.get('/api/agendamentos/usuario/:nome', (req, res) => {
+  const { nome } = req.params;
+  
+  const query = 'SELECT * FROM agendamentos WHERE nome = ? ORDER BY data, horario';
+  
+  db.query(query, [nome], (err, results) => {
+    if (err) {
+      console.error('Erro ao buscar agendamentos do usuário:', err);
+      return res.status(500).json({ success: false, message: 'Erro interno do servidor' });
+    }
+    
+    res.json({ success: true, agendamentos: results });
+  });
+});
+
+// Cancelar agendamento
+app.delete('/api/agendamentos/:id', (req, res) => {
+  const { id } = req.params;
+  
+  const query = 'DELETE FROM agendamentos WHERE id = ?';
+  
+  db.query(query, [id], (err, result) => {
+    if (err) {
+      console.error('Erro ao cancelar agendamento:', err);
+      return res.status(500).json({ success: false, message: 'Erro interno do servidor' });
+    }
+    
+    res.json({ success: true, message: 'Agendamento cancelado com sucesso' });
+  });
+});
+
 app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
 });
