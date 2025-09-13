@@ -123,4 +123,8 @@ export class AgendaPage implements OnInit {
       }
     });
   }
+
+  irParaSuaAgenda() {
+    this.router.navigate(['/sua-reserva']);
+  }
 }
