@@ -218,3 +218,13 @@ ion-button{
     color: #ffffff;
     border-radius: 8px;
 }
+
+.desabilitado {
+    opacity: 0.5;
+    pointer-events: none;
+    border: 2px solid #666 !important;
+}
+
+.desabilitado .dias-Semana {
+    color: #666 !important;
+}

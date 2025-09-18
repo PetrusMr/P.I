@@ -4,6 +4,7 @@ import { addIcons } from 'ionicons';
 import { atOutline, barcode, calendar, camera, image, logoFacebook, logoInstagram, logoTiktok, logoWhatsapp } from 'ionicons/icons';
 import { Router } from '@angular/router';
 import { BasePageComponent } from '../../shared/base-page.component';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
  
 @Component({
   selector: 'app-home',
@@ -18,6 +19,21 @@ export class HomePage {
 
   irParaAgenda() {
     this.router.navigate(['/agenda']);
+  }
+
+  async abrirCamera() {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Camera
+      });
+      
+      console.log('Foto selecionada:', image.webPath);
+    } catch (error) {
+      console.error('Erro ao abrir galeria:', error);
+    }
   }
 
   isActionSheetOpen = false;
