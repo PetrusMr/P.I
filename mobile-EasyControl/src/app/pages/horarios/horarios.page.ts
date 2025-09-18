@@ -49,6 +49,11 @@ export class HorariosPage implements OnInit {
         this.verificarHorariosOcupados();
       }
     });
+    
+    // Atualizar a cada minuto para verificar horários expirados
+    setInterval(() => {
+      this.verificarPeriodosExpirados();
+    }, 60000);
   }
 
   verificarHorariosOcupados() {
@@ -61,6 +66,9 @@ export class HorariosPage implements OnInit {
     this.periodos.manha = { disponivel: true, ocupado: false };
     this.periodos.tarde = { disponivel: true, ocupado: false };
     this.periodos.noite = { disponivel: true, ocupado: false };
+    
+    // Verificar se é hoje e desabilitar períodos expirados
+    this.verificarPeriodosExpirados();
     
     const dataFormatada = this.dataAtual;
     console.log('Consultando API para data:', dataFormatada);
@@ -87,6 +95,43 @@ export class HorariosPage implements OnInit {
         console.error('Erro na consulta:', error);
       }
     });
+  }
+
+  verificarPeriodosExpirados() {
+    const hoje = new Date();
+    const dataHoje = hoje.toISOString().split('T')[0];
+    const horaAtual = hoje.getHours();
+    
+    // Converter dataAtual para formato YYYY-MM-DD se necessário
+    const partesData = this.dataAtual.split('/');
+    const dataComparacao = partesData.length === 3 ? 
+      `${partesData[2]}-${partesData[1].padStart(2, '0')}-${partesData[0].padStart(2, '0')}` : 
+      this.dataAtual;
+    
+    // Se é hoje, verificar horários expirados
+    if (dataComparacao === dataHoje) {
+      if (horaAtual >= 7) {
+        this.periodos.manha.disponivel = false;
+        this.periodos.manha.ocupado = true;
+      }
+      if (horaAtual >= 13) {
+        this.periodos.tarde.disponivel = false;
+        this.periodos.tarde.ocupado = true;
+      }
+      if (horaAtual >= 18) {
+        this.periodos.noite.disponivel = false;
+        this.periodos.noite.ocupado = true;
+      }
+    }
+    // Se é data passada, desabilitar todos
+    else if (dataComparacao < dataHoje) {
+      this.periodos.manha.disponivel = false;
+      this.periodos.manha.ocupado = true;
+      this.periodos.tarde.disponivel = false;
+      this.periodos.tarde.ocupado = true;
+      this.periodos.noite.disponivel = false;
+      this.periodos.noite.ocupado = true;
+    }
   }
 
   async selecionarPeriodo(periodo: string) {
