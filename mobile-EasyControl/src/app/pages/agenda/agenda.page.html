@@ -16,8 +16,8 @@
         (ionChange)="onDateChange($event)">
       </ion-datetime>
       <h3 class="Titulo-h3">Dias para agendar</h3>
-      <ion-item *ngFor="let dia of diasSemana" [class]="'dia-' + dia.cor" button="true" (click)="irParaHorarios(dia)">
-        <ion-label class="dias-Semana">{{dia.nome}} - {{dia.data}} Ver períodos</ion-label>
+      <ion-item *ngFor="let dia of diasSemana" [class]="'dia-' + dia.cor + (dia.desabilitado ? ' desabilitado' : '')" [button]="!dia.desabilitado" (click)="irParaHorarios(dia)">
+        <ion-label class="dias-Semana">{{dia.nome}} - {{dia.data}} {{dia.desabilitado ? '(Indisponível)' : 'Ver períodos'}}</ion-label>
       </ion-item>
       
       <div class="legenda">

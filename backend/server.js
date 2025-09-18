@@ -8,6 +8,44 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 
+// Função para limpar agendamentos expirados
+function limparAgendamentosExpirados(db) {
+  const hoje = new Date();
+  const dataAtual = hoje.toISOString().split('T')[0]; // YYYY-MM-DD
+  const horaAtual = hoje.getHours();
+  
+  let condicaoHorario = '';
+  let params = [];
+  
+  if (horaAtual >= 18) {
+    // Após 18h, remove todos os períodos do dia
+    condicaoHorario = "data <= ?";
+    params = [dataAtual];
+  } else if (horaAtual >= 13) {
+    // Após 13h, remove manhã e tarde de hoje
+    condicaoHorario = "(data < ? OR (data = ? AND horario IN ('manha', 'tarde')))";
+    params = [dataAtual, dataAtual];
+  } else if (horaAtual >= 7) {
+    // Após 7h, remove apenas manhã de hoje
+    condicaoHorario = "(data < ? OR (data = ? AND horario = 'manha'))";
+    params = [dataAtual, dataAtual];
+  } else {
+    // Antes das 7h, remove apenas dias anteriores
+    condicaoHorario = "data < ?";
+    params = [dataAtual];
+  }
+  
+  const query = `DELETE FROM agendamentos WHERE ${condicaoHorario}`;
+  
+  db.query(query, params, (err, result) => {
+    if (err) {
+      console.error('Erro ao limpar agendamentos expirados:', err);
+    } else if (result.affectedRows > 0) {
+      console.log(`${result.affectedRows} agendamentos expirados removidos`);
+    }
+  });
+}
+
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -44,6 +82,15 @@ app.post('/api/login', (req, res) => {
 app.post('/api/agendamentos', (req, res) => {
   const { nome, data, horario } = req.body;
   
+  // Limpar agendamentos expirados antes de salvar
+  limparAgendamentosExpirados(db);
+  
+  // Verifica se a data não é anterior ao dia atual
+  const hoje = new Date().toISOString().split('T')[0];
+  if (data < hoje) {
+    return res.status(400).json({ success: false, message: 'Não é possível agendar para datas anteriores' });
+  }
+  
   // Primeiro verifica se já existe agendamento para essa data e horário
   const checkQuery = 'SELECT * FROM agendamentos WHERE data = ? AND horario = ?';
   
@@ -74,6 +121,9 @@ app.post('/api/agendamentos', (req, res) => {
 // Verificar horários ocupados
 app.get('/api/agendamentos/:data', (req, res) => {
   const { data } = req.params;
+  
+  // Limpar agendamentos expirados antes de consultar
+  limparAgendamentosExpirados(db);
   
   const query = 'SELECT horario FROM agendamentos WHERE data = ?';
   
@@ -120,6 +170,14 @@ app.delete('/api/agendamentos/:id', (req, res) => {
   });
 });
 
-app.listen(port, () => {
+// Executar limpeza de agendamentos expirados a cada hora
+setInterval(() => {
+  limparAgendamentosExpirados(db);
+}, 60 * 60 * 1000); // 1 hora
+
+// Executar limpeza inicial ao iniciar o servidor
+limparAgendamentosExpirados(db);
+
+app.listen(port, '0.0.0.0', () => {
   console.log(`Servidor rodando na porta ${port}`);
 });
