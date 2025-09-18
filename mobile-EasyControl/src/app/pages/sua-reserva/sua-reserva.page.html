@@ -14,9 +14,12 @@
               <div class="agendamento-info">
                 {{agendamento.diaSemana}} - {{agendamento.data}} - {{agendamento.periodo}}
               </div>
-              <ion-button class="cancelar-btn" (click)="cancelarAgendamento(agendamento)">
+              <ion-button *ngIf="agendamento.podeCancelar" class="cancelar-btn" (click)="cancelarAgendamento(agendamento)">
                 Cancelar Agendamento
               </ion-button>
+              <div *ngIf="!agendamento.podeCancelar" class="prazo-expirado">
+                Prazo para cancelamento expirado
+              </div>
             </div>
           </div>
         </div>

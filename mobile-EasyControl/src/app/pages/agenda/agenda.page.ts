@@ -28,6 +28,11 @@ export class AgendaPage implements OnInit {
 
   ionViewWillEnter() {
     this.verificarDisponibilidade();
+    
+    // Atualizar disponibilidade a cada minuto
+    setInterval(() => {
+      this.verificarDisponibilidade();
+    }, 60000);
   }
 
   atualizarDataAtual(dataBase?: string) {
@@ -74,11 +79,15 @@ export class AgendaPage implements OnInit {
       const mes = (data.getMonth() + 1).toString().padStart(2, '0');
       const ano = data.getFullYear();
       
+      const hoje = new Date().toISOString().split('T')[0];
+      const isDataAnterior = `${ano}-${mes}-${dia}` < hoje;
+      
       this.diasSemana.push({
         nome: diasNomes[data.getDay()],
         data: `${dia}/${mes}`,
         dataCompleta: `${ano}-${mes}-${dia}`,
-        cor: 'success'
+        cor: isDataAnterior ? 'medium' : 'success',
+        desabilitado: isDataAnterior
       });
     }
     
@@ -90,15 +99,33 @@ export class AgendaPage implements OnInit {
   }
 
   verificarDisponibilidade() {
+    const hoje = new Date().toISOString().split('T')[0];
+    const horaAtual = new Date().getHours();
+    
     this.diasSemana.forEach(dia => {
+      // Verificar se é hoje e todos os períodos expiraram
+      if (dia.dataCompleta === hoje && horaAtual >= 18) {
+        dia.cor = 'danger';
+        dia.desabilitado = true;
+        return;
+      }
+      
       this.agendamentoService.verificarHorariosOcupados(dia.dataCompleta).subscribe({
         next: (response) => {
-          const horariosOcupados = response.success ? response.horarios.length : 0;
+          let horariosOcupados = response.success ? response.horarios.length : 0;
+          
+          // Se é hoje, contar períodos expirados como ocupados
+          if (dia.dataCompleta === hoje) {
+            if (horaAtual >= 7) horariosOcupados++; // manhã expirada
+            if (horaAtual >= 13) horariosOcupados++; // tarde expirada
+            if (horaAtual >= 18) horariosOcupados++; // noite expirada
+          }
           
           if (horariosOcupados === 0) {
             dia.cor = 'success';
-          } else if (horariosOcupados === 3) {
+          } else if (horariosOcupados >= 3) {
             dia.cor = 'danger';
+            dia.desabilitado = true;
           } else {
             dia.cor = 'warning';
           }
@@ -115,6 +142,10 @@ export class AgendaPage implements OnInit {
   }
 
   irParaHorarios(dia: any) {
+    if (dia.desabilitado) {
+      return; // Não permite navegar para datas anteriores
+    }
+    
     console.log('Clicou no dia:', dia);
     this.router.navigate(['/horarios'], {
       queryParams: {

@@ -1,5 +1,5 @@
 <ion-app>
-  <ion-menu contentId="main-content">
+  <ion-menu contentId="main-content" [disabled]="!isLoggedIn">
     <ion-header>
       <ion-toolbar color="dark">
         <ion-title>Menu</ion-title>
