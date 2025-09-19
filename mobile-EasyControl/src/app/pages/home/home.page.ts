@@ -13,6 +13,8 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
   imports: [BasePageComponent, IonButton, IonIcon],
 })
 export class HomePage {
+  imagemSelecionada: string | undefined;
+
   constructor(private router: Router) {
     addIcons({camera, calendar, barcode, image, logoFacebook, logoInstagram, logoTiktok, logoWhatsapp })
   }
@@ -21,16 +23,20 @@ export class HomePage {
     this.router.navigate(['/agenda']);
   }
 
-  async abrirCamera() {
+  abrirCamera() {
+    this.router.navigate(['/selecao-modo']);
+  }
+
+  async abrirGaleria() {
     try {
       const image = await Camera.getPhoto({
         quality: 90,
         allowEditing: false,
         resultType: CameraResultType.Uri,
-        source: CameraSource.Camera
+        source: CameraSource.Photos
       });
       
-      console.log('Foto selecionada:', image.webPath);
+      console.log('Imagem da galeria selecionada:', image.webPath);
     } catch (error) {
       console.error('Erro ao abrir galeria:', error);
     }

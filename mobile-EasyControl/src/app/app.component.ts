@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { IonApp, IonRouterOutlet, IonMenu, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonIcon, MenuController } from '@ionic/angular/standalone';
 import { Router, NavigationEnd } from '@angular/router';
 import { addIcons } from 'ionicons';
-import { home, calendar, logOut } from 'ionicons/icons';
+import { home, calendar, logOut, camera } from 'ionicons/icons';
 import { filter } from 'rxjs/operators';
 
 @Component({
@@ -14,7 +14,7 @@ export class AppComponent implements OnInit {
   isLoggedIn = false;
 
   constructor(private router: Router, private menuController: MenuController) {
-    addIcons({ home, calendar, logOut });
+    addIcons({ home, calendar, logOut, camera });
   }
 
   ngOnInit() {
