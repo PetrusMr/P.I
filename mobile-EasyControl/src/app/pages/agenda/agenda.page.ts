@@ -86,7 +86,7 @@ export class AgendaPage implements OnInit {
         nome: diasNomes[data.getDay()],
         data: `${dia}/${mes}`,
         dataCompleta: `${ano}-${mes}-${dia}`,
-        cor: isDataAnterior ? 'medium' : 'success',
+        cor: 'success',
         desabilitado: isDataAnterior
       });
     }
@@ -100,34 +100,26 @@ export class AgendaPage implements OnInit {
 
   verificarDisponibilidade() {
     const hoje = new Date().toISOString().split('T')[0];
-    const horaAtual = new Date().getHours();
     
     this.diasSemana.forEach(dia => {
-      // Verificar se é hoje e todos os períodos expiraram
-      if (dia.dataCompleta === hoje && horaAtual >= 18) {
-        dia.cor = 'danger';
+      // Dias anteriores: cinza e desabilitado
+      if (dia.dataCompleta < hoje) {
+        dia.cor = 'medium';
         dia.desabilitado = true;
         return;
       }
       
+      // Verificar quantas reservas existem
       this.agendamentoService.verificarHorariosOcupados(dia.dataCompleta).subscribe({
         next: (response) => {
-          let horariosOcupados = response.success ? response.horarios.length : 0;
-          
-          // Se é hoje, contar períodos expirados como ocupados
-          if (dia.dataCompleta === hoje) {
-            if (horaAtual >= 7) horariosOcupados++; // manhã expirada
-            if (horaAtual >= 13) horariosOcupados++; // tarde expirada
-            if (horaAtual >= 18) horariosOcupados++; // noite expirada
-          }
+          const horariosOcupados = response.success ? response.horarios.length : 0;
           
           if (horariosOcupados === 0) {
-            dia.cor = 'success';
+            dia.cor = 'success'; // Verde: todos disponíveis
           } else if (horariosOcupados >= 3) {
-            dia.cor = 'danger';
-            dia.desabilitado = true;
+            dia.cor = 'danger'; // Vermelho: todos ocupados
           } else {
-            dia.cor = 'warning';
+            dia.cor = 'warning'; // Amarelo: parcialmente ocupado
           }
         },
         error: () => {

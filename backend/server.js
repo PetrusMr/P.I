@@ -78,6 +78,101 @@ app.post('/api/login', (req, res) => {
   });
 });
 
+// Verificar agendamento ativo
+app.get('/api/agendamentos/ativo/:nome', (req, res) => {
+  const { nome } = req.params;
+  const agora = new Date();
+  const dataAtual = agora.toISOString().split('T')[0];
+  const horaAtual = agora.getHours();
+  const minutoAtual = agora.getMinutes();
+  
+  let horarioAtual = '';
+  if (horaAtual >= 7 && horaAtual < 13) {
+    horarioAtual = 'manha';
+  } else if (horaAtual >= 13 && horaAtual < 18) {
+    horarioAtual = 'tarde';
+  } else if (horaAtual >= 18 && horaAtual < 23) {
+    horarioAtual = 'noite';
+  }
+  
+  // Verificar se tem agendamento para hoje no horário atual
+  const query = 'SELECT * FROM agendamentos WHERE nome = ? AND data = ? AND horario = ?';
+  
+  db.query(query, [nome, dataAtual, horarioAtual], (err, results) => {
+    if (err) {
+      console.error('Erro ao verificar agendamento ativo:', err);
+      return res.status(500).json({ success: false, message: 'Erro interno do servidor' });
+    }
+    
+    if (results.length > 0) {
+      // Verificar se está no horário correto
+      let podeEscanear = false;
+      
+      if (horarioAtual === 'manha' && horaAtual >= 7 && (horaAtual > 7 || minutoAtual >= 1)) {
+        podeEscanear = true;
+      } else if (horarioAtual === 'tarde' && horaAtual >= 13 && (horaAtual > 13 || minutoAtual >= 1)) {
+        podeEscanear = true;
+      } else if (horarioAtual === 'noite' && horaAtual >= 18 && (horaAtual > 18 || minutoAtual >= 1)) {
+        podeEscanear = true;
+      }
+      
+      res.json({ 
+        temAgendamento: podeEscanear, 
+        agendamento: podeEscanear ? results[0] : null 
+      });
+    } else {
+      res.json({ temAgendamento: false, agendamento: null });
+    }
+  });
+});
+
+// Verificar se scan foi feito para agendamento específico
+app.get('/api/scans/verificar-agendamento/:nome/:data/:horario/:tipo', (req, res) => {
+  const { nome, data, horario, tipo } = req.params;
+  
+  const query = 'SELECT COUNT(*) as count FROM scans WHERE nome = ? AND data_agendamento = ? AND horario_agendamento = ? AND tipo_scan = ?';
+  
+  db.query(query, [nome, data, horario, tipo], (err, results) => {
+    if (err) {
+      console.error('Erro ao verificar scan do agendamento:', err);
+      return res.status(500).json({ success: false, message: 'Erro interno do servidor' });
+    }
+    
+    const scanFeito = results[0].count > 0;
+    res.json({ scanFeito });
+  });
+});
+
+// Salvar scan
+app.post('/api/scans', (req, res) => {
+  const { nome, tipo_scan, quantidade, data_agendamento, horario_agendamento } = req.body;
+  
+  const agora = new Date();
+  const data = agora.toISOString().split('T')[0];
+  const hora = agora.toTimeString().split(' ')[0];
+  const horaAtual = agora.getHours();
+  
+  let turno;
+  if (horaAtual >= 6 && horaAtual < 12) {
+    turno = 'manha';
+  } else if (horaAtual >= 12 && horaAtual < 18) {
+    turno = 'tarde';
+  } else {
+    turno = 'noite';
+  }
+  
+  const query = 'INSERT INTO scans (nome, tipo_scan, turno, hora_scan, data_scan, quantidade, data_agendamento, horario_agendamento) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+  
+  db.query(query, [nome, tipo_scan, turno, hora, data, quantidade, data_agendamento, horario_agendamento], (err, result) => {
+    if (err) {
+      console.error('Erro ao salvar scan:', err);
+      return res.status(500).json({ success: false, message: 'Erro interno do servidor' });
+    }
+    
+    res.json({ success: true, message: 'Scan salvo com sucesso' });
+  });
+});
+
 // Salvar agendamento
 app.post('/api/agendamentos', (req, res) => {
   const { nome, data, horario } = req.body;
