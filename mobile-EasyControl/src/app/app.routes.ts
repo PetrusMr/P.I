@@ -30,5 +30,15 @@ export const routes: Routes = [
     path: 'sua-reserva',
     loadComponent: () => import('./pages/sua-reserva/sua-reserva.page').then( m => m.SuaReservaPage),
     canActivate: [authGuard]
+  },
+  {
+    path: 'selecao-modo',
+    loadComponent: () => import('./pages/selecao-modo/selecao-modo.page').then( m => m.SelecaoModoPage),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'contador-objetos',
+    loadComponent: () => import('./pages/contador-objetos/contador-objetos.page').then( m => m.ContadorObjetosPage),
+    canActivate: [authGuard]
   }
 ];
