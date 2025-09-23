@@ -12,8 +12,8 @@
  
     <!-- Input senha -->
     <div class="input-box">
-      <ion-input type="password" placeholder="Senha" [(ngModel)]="senha" (ionInput)="onSenhaInput()"></ion-input>
-      <ion-icon name="eye-outline" class="input-icon"></ion-icon>
+      <ion-input [type]="showPassword ? 'text' : 'password'" placeholder="Senha" [(ngModel)]="senha"></ion-input>
+      <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'" class="input-icon password-toggle" (click)="togglePassword()"></ion-icon>
     </div>
  
     <!-- Botão entrar -->
@@ -22,5 +22,15 @@
     <!-- Links -->
     <a href="#" class="links">Esqueci minha senha</a>
     <a href="#" class="link">Termo de Uso</a>
+  </div>
+
+  <!-- Popup de erro igual ao da contagem -->
+  <div class="resultado-overlay" *ngIf="mostrarErro">
+    <div class="resultado-card">
+      <p>{{mensagemErro}}</p>
+      <div class="botoes">
+        <ion-button class="btn-ok" (click)="fecharErro()">OK</ion-button>
+      </div>
+    </div>
   </div>
 </ion-content>

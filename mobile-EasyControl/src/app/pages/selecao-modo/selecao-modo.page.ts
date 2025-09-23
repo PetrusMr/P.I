@@ -31,58 +31,10 @@ export class SelecaoModoPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.verificarAgendamentoAtivo();
+    this.temAgendamentoAtivo = true;
   }
 
-  private verificarAgendamentoAtivo() {
-    const usuarioLogado = localStorage.getItem('usuarioLogado');
-    
-    if (usuarioLogado) {
-      this.http.get(`${environment.apiUrl}/agendamentos/ativo/${usuarioLogado}`).subscribe({
-        next: (response: any) => {
-          this.temAgendamentoAtivo = response.temAgendamento;
-          this.agendamentoAtual = response.agendamento;
-          
-          if (this.temAgendamentoAtivo) {
-            this.verificarScansDoAgendamento();
-          }
-        },
-        error: (error) => {
-          console.error('Erro ao verificar agendamento:', error);
-          this.temAgendamentoAtivo = false;
-        }
-      });
-    }
-  }
 
-  private verificarScansDoAgendamento() {
-    const usuarioLogado = localStorage.getItem('usuarioLogado');
-    
-    if (usuarioLogado && this.agendamentoAtual) {
-      const data = this.agendamentoAtual.data;
-      const horario = this.agendamentoAtual.horario;
-      
-      // Verificar início
-      this.http.get(`${environment.apiUrl}/scans/verificar-agendamento/${usuarioLogado}/${data}/${horario}/inicio_de_aula`).subscribe({
-        next: (response: any) => {
-          this.inicioFeito = response.scanFeito;
-        },
-        error: () => {
-          this.inicioFeito = false;
-        }
-      });
-
-      // Verificar fim
-      this.http.get(`${environment.apiUrl}/scans/verificar-agendamento/${usuarioLogado}/${data}/${horario}/fim_de_aula`).subscribe({
-        next: (response: any) => {
-          this.fimFeito = response.scanFeito;
-        },
-        error: () => {
-          this.fimFeito = false;
-        }
-      });
-    }
-  }
 
   async irParaContador(tipo: string) {
     this.tipoScan = tipo;
@@ -120,20 +72,9 @@ export class SelecaoModoPage implements OnInit {
 
   private async contarObjetos(imageDataUrl: string): Promise<number> {
     try {
-      const response = await fetch(imageDataUrl);
-      const blob = await response.blob();
-      
-      const result = await this.chamarHuggingFaceAPI(blob);
-      
-      if (result && Array.isArray(result)) {
-        const detectionsValidas = result.filter((detection: any) => 
-          detection.score > 0.3
-        );
-        
-        return Math.max(1, detectionsValidas.length);
-      }
-      
-      return 1;
+      const base64Image = imageDataUrl.split(',')[1];
+      const result = await this.chamarGeminiAPI(base64Image);
+      return result;
     } catch (error) {
       console.error('Erro na detecção:', error);
       await this.mostrarErro('Erro na detecção. Usando contagem aproximada.');
@@ -141,24 +82,39 @@ export class SelecaoModoPage implements OnInit {
     }
   }
   
-  private async chamarHuggingFaceAPI(imageBlob: Blob): Promise<any> {
-    const API_URL = 'https://api-inference.huggingface.co/models/facebook/detr-resnet-50';
-    const API_TOKEN = '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';
+  private async chamarGeminiAPI(base64Image: string): Promise<number> {
+    const API_KEY = 'AIzaSyDvgmhHnvwtjr6wkpUz40SUwauygWZRZMA';
     
-    const response = await fetch(API_URL, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${API_TOKEN}`,
-        'Content-Type': 'application/octet-stream'
+        'Content-Type': 'application/json'
       },
-      body: imageBlob
+      body: JSON.stringify({
+        contents: [{
+          parts: [
+            {
+              text: 'Conte TODOS os objetos individuais nesta imagem. Inclua: pendrives, caixas, fones, componentes eletrônicos, Arduino, resistores, capacitores, moedas, pessoas, ou qualquer outro objeto distinto. Conte cada item separadamente, mesmo que sejam do mesmo tipo. Se não houver objetos, responda 0. Responda APENAS com o número total.'
+            },
+            {
+              inline_data: {
+                mime_type: 'image/jpeg',
+                data: base64Image
+              }
+            }
+          ]
+        }]
+      })
     });
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     
-    return await response.json();
+    const data = await response.json();
+    const text = data.candidates[0].content.parts[0].text.trim();
+    const count = parseInt(text.replace(/\D/g, ''));
+    return isNaN(count) ? 0 : Math.max(0, count);
   }
   
   private async mostrarErro(mensagem: string) {
@@ -177,68 +133,13 @@ export class SelecaoModoPage implements OnInit {
   }
 
   async finalizar() {
-    const usuarioLogado = localStorage.getItem('usuarioLogado');
-    
-    if (!usuarioLogado || !this.agendamentoAtual) {
-      const toast = await this.toastController.create({
-        message: 'Dados não encontrados',
-        duration: 2000,
-        color: 'danger',
-        position: 'top'
-      });
-      await toast.present();
-      return;
-    }
-    
-    try {
-      const response = await this.http.post(`${environment.apiUrl}/scans`, {
-        nome: usuarioLogado,
-        tipo_scan: this.tipoScan,
-        quantidade: this.totalObjetos,
-        data_agendamento: this.agendamentoAtual.data,
-        horario_agendamento: this.agendamentoAtual.horario
-      }).subscribe({
-        next: (response: any) => {
-          console.log('Scan salvo com sucesso:', response);
-          
-          // Atualizar estado dos botões
-          if (this.tipoScan === 'inicio_de_aula') {
-            this.inicioFeito = true;
-          } else if (this.tipoScan === 'fim_de_aula') {
-            this.fimFeito = true;
-          }
-          
-          this.toastController.create({
-            message: 'Scan salvo com sucesso!',
-            duration: 2000,
-            color: 'success',
-            position: 'top'
-          }).then(toast => toast.present());
-        },
-        error: (error: any) => {
-          console.error('Erro ao salvar scan:', error);
-          let mensagemErro = 'Erro desconhecido';
-          
-          if (error.error && error.error.message) {
-            mensagemErro = error.error.message;
-          } else if (error.message) {
-            mensagemErro = error.message;
-          } else if (error.status) {
-            mensagemErro = `Erro HTTP ${error.status}`;
-          }
-          
-          this.toastController.create({
-            message: `Erro ao salvar: ${mensagemErro}`,
-            duration: 3000,
-            color: 'danger',
-            position: 'top'
-          }).then(toast => toast.present());
-        }
-      });
-      
-    } catch (error) {
-      console.error('Erro geral:', error);
-    }
+    const toast = await this.toastController.create({
+      message: `Contagem finalizada: ${this.totalObjetos} objetos (${this.tipoScan})`,
+      duration: 2000,
+      color: 'success',
+      position: 'top'
+    });
+    await toast.present();
     
     this.mostrarResultado = false;
     this.totalObjetos = 0;

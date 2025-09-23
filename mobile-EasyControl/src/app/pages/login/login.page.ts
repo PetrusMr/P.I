@@ -1,8 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { IonContent, IonButton ,IonInput, IonIcon, } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { Router } from '@angular/router';
-import { person, personCircle, eyeOutline, personOutline, cameraOutline } from 'ionicons/icons';
+import { person, personCircle, eyeOutline, eyeOffOutline, personOutline, cameraOutline } from 'ionicons/icons';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { AlertController, MenuController } from '@ionic/angular';
@@ -11,12 +12,15 @@ import { AlertController, MenuController } from '@ionic/angular';
   selector: 'app-login',
   templateUrl: 'login.page.html',
   styleUrls: ['login.page.scss'],
-  imports: [IonContent, IonButton, IonInput, IonIcon, FormsModule
+  imports: [CommonModule, IonContent, IonButton, IonInput, IonIcon, FormsModule
   ],
 })
 export class LoginPage implements OnInit, OnDestroy {
   usuario: string = '';
   senha: string = '';
+  showPassword: boolean = false;
+  mostrarErro: boolean = false;
+  mensagemErro: string = '';
 
   constructor(
     private router: Router,
@@ -24,7 +28,7 @@ export class LoginPage implements OnInit, OnDestroy {
     private alertController: AlertController,
     private menuController: MenuController
   ) {
-     addIcons({personCircle, person, eyeOutline, personOutline, cameraOutline});
+     addIcons({personCircle, person, eyeOutline, eyeOffOutline, personOutline, cameraOutline});
   }
 
   ngOnInit() {
@@ -37,7 +41,7 @@ export class LoginPage implements OnInit, OnDestroy {
 
   login() {
     if (!this.usuario || !this.senha) {
-      this.showAlert('Erro', 'Preencha todos os campos');
+      this.mostrarPopupErro('Preencha todos os campos');
       return;
     }
 
@@ -50,27 +54,22 @@ export class LoginPage implements OnInit, OnDestroy {
         }
       },
       error: (error) => {
-        this.showAlert('Erro', 'Usuário ou senha inválidos');
+        this.mostrarPopupErro('Usuário ou senha inválidos');
       }
     });
   }
 
-  async showAlert(header: string, message: string) {
-    const alert = await this.alertController.create({
-      header,
-      message,
-      buttons: ['OK']
-    });
-    await alert.present();
+  mostrarPopupErro(mensagem: string) {
+    this.mensagemErro = mensagem;
+    this.mostrarErro = true;
   }
 
-  onSenhaInput() {
-    const eyeIcon = document.querySelector('.input-box:last-of-type .input-icon') as HTMLElement;
-    if (eyeIcon && this.senha.length > 0) {
-      eyeIcon.style.display = 'none';
-    } else if (eyeIcon && this.senha.length === 0) {
-      eyeIcon.style.display = 'block';
-    }
+  fecharErro() {
+    this.mostrarErro = false;
+  }
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
   }
 }
  

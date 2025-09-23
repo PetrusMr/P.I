@@ -1,22 +1,12 @@
 <app-base-page pageTitle="" [showBackButton]="true" backRoute="/home">
   <div class="container">
     <div class="botoes-container" *ngIf="!mostrarResultado">
-      <div class="status-agendamento" *ngIf="!temAgendamentoAtivo">
-        <p>Nenhum agendamento ativo no momento</p>
-      </div>
-      
-      <ion-button class="botao-modo" 
-                  [class.ativo]="temAgendamentoAtivo && !inicioFeito && !fimFeito" 
-                  [class.inativo]="!temAgendamentoAtivo || inicioFeito || fimFeito" 
-                  [disabled]="!temAgendamentoAtivo || inicioFeito || fimFeito" 
+      <ion-button class="botao-modo ativo" 
                   (click)="irParaContador('inicio_de_aula')">
         INICIO
       </ion-button>
       
-      <ion-button class="botao-modo" 
-                  [class.ativo]="temAgendamentoAtivo && inicioFeito && !fimFeito" 
-                  [class.inativo]="!temAgendamentoAtivo || !inicioFeito || fimFeito" 
-                  [disabled]="!temAgendamentoAtivo || !inicioFeito || fimFeito" 
+      <ion-button class="botao-modo ativo" 
                   (click)="irParaContador('fim_de_aula')">
         FIM
       </ion-button>

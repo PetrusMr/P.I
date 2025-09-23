@@ -20,6 +20,9 @@ export class HorariosPage implements OnInit {
   dataSelecionada = 'Dia 01/05/2025';
   diaAtual = '';
   dataAtual = '';
+  mostrarConfirmacao = false;
+  mensagemConfirmacao = '';
+  periodoSelecionado = '';
   
   periodos = {
     manha: { disponivel: true, ocupado: false },
@@ -134,31 +137,25 @@ export class HorariosPage implements OnInit {
     }
   }
 
-  async selecionarPeriodo(periodo: string) {
+  selecionarPeriodo(periodo: string) {
     if (!this.periodos[periodo as keyof typeof this.periodos].disponivel) {
       return;
     }
     
-    const alert = await this.alertController.create({
-      header: 'Confirmar Agendamento',
-      message: `Tem certeza que deseja agendar o período da ${periodo}?`,
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel'
-        },
-        {
-          text: 'Confirmar',
-          handler: () => {
-            this.salvarAgendamento(periodo);
-            this.periodos[periodo as keyof typeof this.periodos].ocupado = true;
-            this.periodos[periodo as keyof typeof this.periodos].disponivel = false;
-          }
-        }
-      ]
-    });
-    
-    await alert.present();
+    this.periodoSelecionado = periodo;
+    this.mensagemConfirmacao = `Tem certeza que deseja agendar o período da ${periodo}?`;
+    this.mostrarConfirmacao = true;
+  }
+
+  confirmarAgendamento() {
+    this.salvarAgendamento(this.periodoSelecionado);
+    this.periodos[this.periodoSelecionado as keyof typeof this.periodos].ocupado = true;
+    this.periodos[this.periodoSelecionado as keyof typeof this.periodos].disponivel = false;
+    this.mostrarConfirmacao = false;
+  }
+
+  cancelarAgendamento() {
+    this.mostrarConfirmacao = false;
   }
 
   salvarAgendamento(periodo: string) {
@@ -174,7 +171,6 @@ export class HorariosPage implements OnInit {
       error: (error) => {
         console.error('Erro ao salvar agendamento:', error);
         if (error.status === 400) {
-          alert('Horário já está ocupado!');
           // Recarrega os horários para atualizar o estado
           this.verificarHorariosOcupados();
         }

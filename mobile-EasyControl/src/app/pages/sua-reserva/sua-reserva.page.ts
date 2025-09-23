@@ -17,6 +17,9 @@ import { AgendamentoService } from '../../services/agendamento.service';
 })
 export class SuaReservaPage implements OnInit {
   agendamentos: any[] = [];
+  mostrarConfirmacao = false;
+  mensagemConfirmacao = '';
+  agendamentoParaCancelar: any = null;
 
   constructor(
     private agendamentoService: AgendamentoService,
@@ -78,35 +81,31 @@ export class SuaReservaPage implements OnInit {
     });
   }
 
-  async cancelarAgendamento(agendamento: any) {
-    const alert = await this.alertController.create({
-      header: 'Cancelar Agendamento',
-      message: `Tem certeza que deseja cancelar o agendamento de ${agendamento.diaSemana} - ${agendamento.data} - ${agendamento.periodo}?`,
-      buttons: [
-        {
-          text: 'Não',
-          role: 'cancel'
-        },
-        {
-          text: 'Sim',
-          handler: () => {
-            this.agendamentoService.cancelarAgendamento(agendamento.id).subscribe({
-              next: (response) => {
-                if (response.success) {
-                  this.agendamentos = this.agendamentos.filter(a => a.id !== agendamento.id);
-                  this.carregarAgendamentos(); // Recarrega a lista
-                }
-              },
-              error: (error) => {
-                console.error('Erro ao cancelar agendamento:', error);
-              }
-            });
+  cancelarAgendamento(agendamento: any) {
+    this.agendamentoParaCancelar = agendamento;
+    this.mensagemConfirmacao = `Tem certeza que deseja cancelar o agendamento de ${agendamento.diaSemana} - ${agendamento.data} - ${agendamento.periodo}?`;
+    this.mostrarConfirmacao = true;
+  }
+
+  confirmarCancelamento() {
+    if (this.agendamentoParaCancelar) {
+      this.agendamentoService.cancelarAgendamento(this.agendamentoParaCancelar.id).subscribe({
+        next: (response) => {
+          if (response.success) {
+            this.agendamentos = this.agendamentos.filter(a => a.id !== this.agendamentoParaCancelar.id);
+            this.carregarAgendamentos();
           }
+        },
+        error: (error) => {
+          console.error('Erro ao cancelar agendamento:', error);
         }
-      ]
-    });
-    
-    await alert.present();
+      });
+    }
+    this.mostrarConfirmacao = false;
+  }
+
+  fecharConfirmacao() {
+    this.mostrarConfirmacao = false;
   }
 
 }

@@ -31,3 +31,14 @@
     </ion-card-content>
   </ion-card>
 </app-base-page>
+
+<!-- Popup de cancelamento customizado -->
+<div class="resultado-overlay" *ngIf="mostrarConfirmacao">
+  <div class="resultado-card">
+    <p>{{mensagemConfirmacao}}</p>
+    <div class="botoes">
+      <ion-button class="btn-confirmar" (click)="confirmarCancelamento()">SIM</ion-button>
+      <ion-button class="btn-cancelar" (click)="fecharConfirmacao()">NÃO</ion-button>
+    </div>
+  </div>
+</div>

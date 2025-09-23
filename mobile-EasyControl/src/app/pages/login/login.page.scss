@@ -102,6 +102,12 @@ ion-input.has-focus {
   color: #aaa;
   font-size: 20px;
 }
+
+.password-toggle {
+  cursor: pointer;
+  color: #2eb2f1 !important;
+  z-index: 10;
+}
  
 .login-button {
   --background: #2eb2f1; /* azul igual da imagem */
@@ -139,3 +145,44 @@ ion-input.has-focus {
   --color: #323334 !important;
   margin-bottom: 40px;
 }
+
+.resultado-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.resultado-card {
+  background: #333;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  color: white;
+  border: 2px solid #00bcd4;
+}
+
+.resultado-card p {
+  margin-bottom: 20px;
+  color: #ccc;
+}
+
+.botoes {
+  display: flex;
+  justify-content: center;
+}
+
+.btn-ok {
+  width: 80px;
+  height: 40px;
+  --border-radius: 20px;
+  --background: #00bcd4;
+  --color: white;
+}
+
