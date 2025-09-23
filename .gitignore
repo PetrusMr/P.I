@@ -1,7 +1,25 @@
-# .vscode
-# /node_modules
-# .browserlistrc
-# .editorconfig
-# .eslintrc.json
-# angular.json
-# capacit
+# Arquivos com chaves/tokens sensíveis
+chave_gpt.txt
+*.key
+*.token
+
+# Node modules
+node_modules/
+
+# Build outputs
+dist/
+build/
+.angular/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
