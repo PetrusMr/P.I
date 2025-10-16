@@ -1,7 +1,7 @@
 // EXEMPLO: Como criar uma nova página usando o padrão
 
-// 1. HTML da nova página (exemplo-page.html):
-/*
+export const exemploDocumentacao = {
+  html: `
 <app-base-page pageTitle="Título da Página" [showBackButton]="true" backRoute="/home">
   <!-- Seu conteúdo específico aqui -->
   <div class="meu-conteudo">
@@ -9,10 +9,9 @@
     <ion-button>Meu botão</ion-button>
   </div>
 </app-base-page>
-*/
-
-// 2. TypeScript da nova página (exemplo-page.ts):
-/*
+  `,
+  
+  typescript: `
 import { Component } from '@angular/core';
 import { IonButton } from '@ionic/angular/standalone';
 import { BasePageComponent } from '../../shared/base-page.component';
@@ -21,14 +20,16 @@ import { BasePageComponent } from '../../shared/base-page.component';
   selector: 'app-exemplo',
   templateUrl: 'exemplo.page.html',
   styleUrls: ['exemplo.page.scss'],
-  imports: [BasePageComponent, IonButton] // Importe apenas os componentes que você usar
+  imports: [BasePageComponent, IonButton]
 })
 export class ExemploPage {
   constructor() {}
 }
-*/
-
-// Propriedades do BasePageComponent:
-// - pageTitle: string - Título que aparece no header
-// - showBackButton: boolean - Se deve mostrar botão de voltar (padrão: false)
-// - backRoute: string - Rota para onde o botão voltar vai (padrão: '/home')
+  `,
+  
+  propriedades: {
+    pageTitle: 'Título que aparece no header',
+    showBackButton: 'Se deve mostrar botão de voltar (padrão: false)',
+    backRoute: 'Rota para onde o botão voltar vai (padrão: /home)'
+  }
+};

@@ -1,0 +1,102 @@
+ion-app, ion-content {
+  background-color: #222428;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px;
+}
+
+.botoes-controle {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 100%;
+}
+
+.botao-inicio, .botao-fim {
+  flex: 1;
+  margin: 0;
+  border-radius: 12px;
+  border: 2px solid rgb(72, 172, 255);
+  --background: transparent !important;
+  --background-activated: rgba(72, 172, 255, 0.1) !important;
+  --background-focused: rgba(72, 172, 255, 0.1) !important;
+  --background-hover: rgba(72, 172, 255, 0.1) !important;
+  font-size: 24px;
+  font-weight: bold;
+  min-height: 200px;
+}
+
+.botao-inicio span {
+  color: rgb(72, 172, 255);
+}
+
+.botao-fim {
+  opacity: 0.5;
+}
+
+.botao-fim:not([disabled]) {
+  opacity: 1;
+}
+
+.botao-fim span {
+  color: rgb(72, 172, 255);
+}
+
+.botao-fim:not([disabled]) span {
+  color: rgb(72, 172, 255);
+}
+
+.resultado-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.resultado-card {
+  background: #333;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  color: white;
+  border: 2px solid rgb(72, 172, 255);
+  max-width: 90%;
+  max-height: 80%;
+  overflow-y: auto;
+}
+
+.resultado-card h3 {
+  margin-bottom: 15px;
+  color: rgb(72, 172, 255);
+  font-size: 18px;
+}
+
+.resultado-card p {
+  margin-bottom: 20px;
+  color: #ccc;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.botoes {
+  display: flex;
+  justify-content: center;
+}
+
+.btn-ok {
+  width: 80px;
+  height: 40px;
+  --border-radius: 20px;
+  --background: rgb(72, 172, 255);
+  --color: white;
+}

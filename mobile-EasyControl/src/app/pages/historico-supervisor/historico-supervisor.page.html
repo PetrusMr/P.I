@@ -1,0 +1,30 @@
+<app-base-page pageTitle="Histórico de Reservas" [showBackButton]="true" backRoute="/home-supervisor">
+  <ion-card>
+    <ion-card-content>
+      <div class="titulo-calendario">
+        <ion-icon name="calendar-outline" class="calendario-icon"></ion-icon>
+        <ion-button fill="clear" class="botao-data" (click)="toggleCalendario()">
+          {{dataAtual}}
+        </ion-button>
+      </div>
+      
+      <ion-datetime 
+        *ngIf="mostrarCalendario" 
+        presentation="date" 
+        class="calendario-popup"
+        [(ngModel)]="selectedDate"
+        (ionChange)="onDateChange($event)">
+      </ion-datetime>
+
+      <div class="historico-container">
+        <div *ngFor="let reserva of historico" class="reserva-item" (click)="verScans(reserva)">
+          {{reserva.data}} - {{reserva.nome}} - {{reserva.horario}}
+        </div>
+
+        <div *ngIf="historico.length === 0" class="sem-reservas">
+          Nenhum histórico encontrado para esta semana
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</app-base-page>

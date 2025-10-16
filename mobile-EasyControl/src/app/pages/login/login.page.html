@@ -4,6 +4,17 @@
     <!-- Ícone da câmera -->
     <ion-icon name="camera-outline" class="camera-icon"></ion-icon>
  
+    <!-- Toggle customizado -->
+    <div class="toggle-container">
+      <span class="toggle-label left">Professor</span>
+      <div class="custom-toggle" (click)="toggleSwitch()">
+        <div class="toggle-track" [class.active]="toggleActive">
+          <div class="toggle-thumb" [class.active]="toggleActive"></div>
+        </div>
+      </div>
+      <span class="toggle-label right">Supervisor</span>
+    </div>
+ 
     <!-- Input usuário -->
     <div class="input-box">
       <ion-input placeholder="Usuario" [(ngModel)]="usuario"></ion-input>

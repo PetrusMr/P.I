@@ -1,0 +1,22 @@
+<app-base-page pageTitle="Detalhes do Scan" [showBackButton]="true" backRoute="/historico-supervisor">
+  <div class="container">
+    <ion-card *ngFor="let scan of scans" class="scan-card">
+      <ion-card-content>
+        <div class="scan-info">
+          <h3>{{scan.tipo_scan | uppercase}}</h3>
+          <p><strong>Usuário:</strong> {{scan.usuario}}</p>
+          <p><strong>Data/Hora:</strong> {{formatarDataHora(scan.data_hora)}}</p>
+          <p><strong>Turno:</strong> {{scan.turno}}</p>
+          <div class="resultado">
+            <strong>Resultado:</strong>
+            <pre>{{scan.resultado_scan}}</pre>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+    
+    <div *ngIf="scans.length === 0" class="no-scans">
+      <p>Scan não foi feito</p>
+    </div>
+  </div>
+</app-base-page>

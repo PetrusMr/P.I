@@ -105,13 +105,10 @@ export class HorariosPage implements OnInit {
     const dataHoje = hoje.toISOString().split('T')[0];
     const horaAtual = hoje.getHours();
     
-    // Converter dataAtual para formato YYYY-MM-DD se necessário
-    const partesData = this.dataAtual.split('/');
-    const dataComparacao = partesData.length === 3 ? 
-      `${partesData[2]}-${partesData[1].padStart(2, '0')}-${partesData[0].padStart(2, '0')}` : 
-      this.dataAtual;
+    // dataAtual já está no formato YYYY-MM-DD
+    const dataComparacao = this.dataAtual;
     
-    // Se é hoje, verificar horários expirados
+    // Apenas bloquear se for hoje E o horário já passou
     if (dataComparacao === dataHoje) {
       if (horaAtual >= 7) {
         this.periodos.manha.disponivel = false;
@@ -135,6 +132,7 @@ export class HorariosPage implements OnInit {
       this.periodos.noite.disponivel = false;
       this.periodos.noite.ocupado = true;
     }
+    // Para datas futuras, manter todos disponíveis (serão verificados pela API)
   }
 
   selecionarPeriodo(periodo: string) {

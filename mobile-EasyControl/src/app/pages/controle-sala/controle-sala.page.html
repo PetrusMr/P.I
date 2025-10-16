@@ -1,0 +1,27 @@
+<app-base-page pageTitle="Controle da Sala" [showBackButton]="true" backRoute="/home">
+  <div class="container">
+    <div class="botoes-controle">
+      <ion-button class="botao-inicio" (click)="iniciarSessao()" [disabled]="sessaoIniciada || !temReservaAtiva || cicloFinalizado">
+        <span>INICIO</span>
+      </ion-button>
+      
+      <ion-button class="botao-fim" (click)="finalizarSessao()" [disabled]="!sessaoIniciada || !temReservaAtiva || cicloFinalizado">
+        <span>FIM</span>
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Popup customizado -->
+  <div class="resultado-overlay" *ngIf="mostrarResultado">
+    <div class="resultado-card">
+      <h3 *ngIf="!isErro">Análise de Componentes</h3>
+      <h3 *ngIf="isErro">Erro</h3>
+      <p>{{mensagemResultado}}</p>
+      <p *ngIf="!isErro">Deseja salvar?</p>
+      <div class="botoes">
+        <ion-button *ngIf="!isErro" class="btn-ok" (click)="salvar()">SIM</ion-button>
+        <ion-button class="btn-ok" (click)="clickarNao()">{{isErro ? 'OK' : 'NÃO'}}</ion-button>
+      </div>
+    </div>
+  </div>
+</app-base-page>

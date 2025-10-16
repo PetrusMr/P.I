@@ -100,19 +100,41 @@ export class AgendaPage implements OnInit {
 
   verificarDisponibilidade() {
     const hoje = new Date().toISOString().split('T')[0];
+    const agora = new Date();
+    const horaAtual = agora.getHours();
     
     this.diasSemana.forEach(dia => {
-      // Dias anteriores: cinza e desabilitado
+      // Dias anteriores: vermelho e desabilitado
       if (dia.dataCompleta < hoje) {
-        dia.cor = 'medium';
+        dia.cor = 'danger';
         dia.desabilitado = true;
         return;
+      }
+      
+      // Se é hoje, verificar se todos os horários já passaram
+      if (dia.dataCompleta === hoje && horaAtual >= 18) {
+        dia.cor = 'danger';
+        dia.desabilitado = true;
+        return;
+      }
+      
+      // Para datas futuras, sempre permitir acesso
+      if (dia.dataCompleta > hoje) {
+        dia.desabilitado = false;
       }
       
       // Verificar quantas reservas existem
       this.agendamentoService.verificarHorariosOcupados(dia.dataCompleta).subscribe({
         next: (response) => {
-          const horariosOcupados = response.success ? response.horarios.length : 0;
+          let horariosOcupados = response.success ? response.horarios.length : 0;
+          
+          // Se é hoje, contar horários que já passaram como ocupados
+          if (dia.dataCompleta === hoje) {
+            if (horaAtual >= 7) horariosOcupados++; // manhã passou
+            if (horaAtual >= 13) horariosOcupados++; // tarde passou
+            if (horaAtual >= 18) horariosOcupados++; // noite passou
+          }
+          // Para datas futuras, não adicionar horários expirados
           
           if (horariosOcupados === 0) {
             dia.cor = 'success'; // Verde: todos disponíveis
@@ -123,7 +145,23 @@ export class AgendaPage implements OnInit {
           }
         },
         error: () => {
-          dia.cor = 'success';
+          // Se é hoje, verificar horários expirados
+          if (dia.dataCompleta === hoje) {
+            let horariosExpirados = 0;
+            if (horaAtual >= 7) horariosExpirados++;
+            if (horaAtual >= 13) horariosExpirados++;
+            if (horaAtual >= 18) horariosExpirados++;
+            
+            if (horariosExpirados === 0) {
+              dia.cor = 'success';
+            } else if (horariosExpirados >= 3) {
+              dia.cor = 'danger';
+            } else {
+              dia.cor = 'warning';
+            }
+          } else {
+            dia.cor = 'success';
+          }
         }
       });
     });

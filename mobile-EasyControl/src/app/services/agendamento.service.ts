@@ -30,4 +30,14 @@ export class AgendamentoService {
   cancelarAgendamento(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/agendamentos/${id}`);
   }
+
+
+
+  buscarAgendamentoPorDataHorario(data: string, horario: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/agendamentos/buscar/${data}/${horario}`);
+  }
+
+  buscarTodasReservas(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/agendamentos/todas`);
+  }
 }

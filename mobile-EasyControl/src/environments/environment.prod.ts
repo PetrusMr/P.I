@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://192.168.192.217:3000/api'
+  apiUrl: 'https://back-end-requtluwk-petrusmrs-projects.vercel.app/api',
+  geminiApiKey: 'AIzaSyD61brqsqzlZMLszfWh791tfHM7bURVT-0'
 };

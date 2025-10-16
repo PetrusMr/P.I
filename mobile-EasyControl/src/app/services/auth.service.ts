@@ -12,6 +12,14 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(usuario: string, senha: string): Observable<any> {
+    console.log('Fazendo login para:', `${this.apiUrl}/login`);
     return this.http.post(`${this.apiUrl}/login`, { usuario, senha });
   }
+
+  loginSupervisor(usuario: string, senha: string): Observable<any> {
+    console.log('Fazendo login supervisor para:', `${this.apiUrl}/login-supervisor`);
+    return this.http.post(`${this.apiUrl}/login-supervisor`, { usuario, senha });
+  }
+
+
 }

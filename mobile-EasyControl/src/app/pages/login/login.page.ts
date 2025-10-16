@@ -21,6 +21,7 @@ export class LoginPage implements OnInit, OnDestroy {
   showPassword: boolean = false;
   mostrarErro: boolean = false;
   mensagemErro: string = '';
+  toggleActive: boolean = false;
 
   constructor(
     private router: Router,
@@ -40,21 +41,40 @@ export class LoginPage implements OnInit, OnDestroy {
   }
 
   login() {
+    console.log('Botão login clicado');
+    console.log('Usuário:', this.usuario, 'Senha:', this.senha);
+    console.log('Tipo:', this.toggleActive ? 'supervisor' : 'professor');
+    
     if (!this.usuario || !this.senha) {
+      console.log('Campos vazios');
       this.mostrarPopupErro('Preencha todos os campos');
       return;
     }
 
-    this.authService.login(this.usuario, this.senha).subscribe({
+    console.log('Iniciando requisição de login...');
+    const loginMethod = this.toggleActive ? 
+      this.authService.loginSupervisor(this.usuario, this.senha) : 
+      this.authService.login(this.usuario, this.senha);
+
+    console.log('Observable criado, fazendo subscribe...');
+    loginMethod.subscribe({
       next: (response) => {
+        console.log('Resposta do login:', response);
         if (response.success) {
           localStorage.setItem('usuarioLogado', this.usuario);
+          localStorage.setItem('tipoUsuario', this.toggleActive ? 'supervisor' : 'professor');
           this.menuController.enable(true);
-          this.router.navigateByUrl('/home');
+          
+          const homeRoute = this.toggleActive ? '/home-supervisor' : '/home';
+          this.router.navigateByUrl(homeRoute);
         }
       },
       error: (error) => {
+        console.error('Erro no login:', error);
         this.mostrarPopupErro('Usuário ou senha inválidos');
+      },
+      complete: () => {
+        console.log('Requisição de login finalizada');
       }
     });
   }
@@ -70,6 +90,10 @@ export class LoginPage implements OnInit, OnDestroy {
 
   togglePassword() {
     this.showPassword = !this.showPassword;
+  }
+
+  toggleSwitch() {
+    this.toggleActive = !this.toggleActive;
   }
 }
  

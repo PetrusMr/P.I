@@ -146,6 +146,55 @@ ion-input.has-focus {
   margin-bottom: 40px;
 }
 
+.toggle-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+  gap: 15px;
+}
+
+.toggle-label {
+  color: #969696;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.custom-toggle {
+  cursor: pointer;
+}
+
+.toggle-track {
+  width: 50px;
+  height: 24px;
+  background-color: #444;
+  border-radius: 12px;
+  position: relative;
+  transition: background-color 0.3s ease;
+  border: 2px solid #666;
+}
+
+.toggle-track.active {
+  background-color: rgb(72, 172, 255);
+  border-color: rgb(72, 172, 255);
+}
+
+.toggle-thumb {
+  width: 18px;
+  height: 18px;
+  background-color: #969696;
+  border-radius: 50%;
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.toggle-thumb.active {
+  transform: translateX(26px);
+  background-color: #ffffff;
+}
+
 .resultado-overlay {
   position: absolute;
   top: 0;

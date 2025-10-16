@@ -1,0 +1,78 @@
+.container {
+  padding: 20px;
+  background-color: #1e1e1e;
+  min-height: 100vh;
+}
+
+.scan-card {
+  margin-bottom: 20px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+  border: 1px solid #48acff;
+  box-shadow: 0 4px 12px rgba(72, 172, 255, 0.1);
+}
+
+.scan-info {
+  padding: 8px;
+}
+
+.scan-info h3 {
+  color: #48acff;
+  margin-bottom: 15px;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  padding: 8px;
+  background-color: rgba(72, 172, 255, 0.1);
+  border-radius: 8px;
+}
+
+.scan-info p {
+  margin: 10px 0;
+  color: #e0e0e0;
+  font-size: 14px;
+  padding: 4px 0;
+}
+
+.scan-info p strong {
+  color: #48acff;
+  font-weight: 600;
+}
+
+.resultado {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #2a2a2a;
+  border-radius: 12px;
+  border: 1px solid #48acff;
+}
+
+.resultado strong {
+  color: #48acff;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.resultado pre {
+  color: #e0e0e0;
+  white-space: pre-wrap;
+  margin: 10px 0 0 0;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.4;
+  background-color: #1a1a1a;
+  padding: 10px;
+  border-radius: 8px;
+  border-left: 3px solid #48acff;
+}
+
+.no-scans {
+  text-align: center;
+  padding: 60px 20px;
+  color: #888;
+  font-size: 18px;
+  font-weight: 500;
+  background-color: #2a2a2a;
+  border-radius: 16px;
+  border: 1px solid #48acff;
+}

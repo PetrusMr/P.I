@@ -1,9 +1,8 @@
+-- Criar tabela para armazenar os scans de componentes
 CREATE TABLE IF NOT EXISTS scans (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL,
-    turno ENUM('manha', 'tarde', 'noite') NOT NULL,
-    hora_scan TIME NOT NULL,
-    data_scan DATE NOT NULL,
-    quantidade INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    usuario VARCHAR(255) NOT NULL,
+    data_hora DATETIME DEFAULT CURRENT_TIMESTAMP,
+    tipo_scan ENUM('inicio', 'fim') NOT NULL,
+    resultado_scan TEXT NOT NULL
 );

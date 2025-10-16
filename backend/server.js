@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
@@ -5,10 +6,62 @@ const cors = require('cors');
 const app = express();
 const port = 3000;
 
-app.use(cors());
-app.use(express.json());
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Função para limpar agendamentos expirados
+// Função para verificar e salvar scan incompleto
+function verificarESalvarScanIncompleto(db, agendamento) {
+  const dataAgendamento = new Date(agendamento.data).toISOString().split('T')[0];
+  
+  // Buscar scans do usuário para esta data
+  const queryScans = `
+    SELECT tipo_scan, resultado_scan 
+    FROM scans 
+    WHERE usuario = ? 
+    AND DATE(data_hora) = ?
+    ORDER BY data_hora
+  `;
+  
+  db.query(queryScans, [agendamento.nome, dataAgendamento], (err, scans) => {
+    if (err) {
+      console.error('Erro ao verificar scans:', err);
+      return;
+    }
+    
+    const scanInicio = scans.find(scan => scan.tipo_scan === 'inicio');
+    const temFim = scans.some(scan => scan.tipo_scan === 'fim');
+    
+    let statusScan = '';
+    if (!scanInicio && !temFim) {
+      statusScan = 'Nenhum scan realizado';
+    } else if (scanInicio && !temFim) {
+      statusScan = `Scan incompleto - Início: ${scanInicio.resultado_scan}`;
+    } else if (scanInicio && temFim) {
+      return; // Scan completo, não precisa salvar
+    }
+    
+    // Salvar scan incompleto
+    const insertScanIncompleto = `
+      INSERT INTO scans (usuario, tipo_scan, resultado_scan, data_hora) 
+      VALUES (?, 'fim', ?, NOW())
+    `;
+    
+    db.query(insertScanIncompleto, [agendamento.nome, statusScan], (err) => {
+      if (err) {
+        console.error('Erro ao salvar scan incompleto:', err);
+      } else {
+        console.log(`Scan incompleto salvo para ${agendamento.nome} - ${agendamento.horario}`);
+      }
+    });
+  });
+}
+
+// Função para mover agendamentos expirados para o histórico
 function limparAgendamentosExpirados(db) {
   const hoje = new Date();
   const dataAtual = hoje.toISOString().split('T')[0]; // YYYY-MM-DD
@@ -17,40 +70,77 @@ function limparAgendamentosExpirados(db) {
   let condicaoHorario = '';
   let params = [];
   
-  if (horaAtual >= 18) {
-    // Após 18h, remove todos os períodos do dia
-    condicaoHorario = "data <= ?";
-    params = [dataAtual];
-  } else if (horaAtual >= 13) {
-    // Após 13h, remove manhã e tarde de hoje
-    condicaoHorario = "(data < ? OR (data = ? AND horario IN ('manha', 'tarde')))";
-    params = [dataAtual, dataAtual];
-  } else if (horaAtual >= 7) {
-    // Após 7h, remove apenas manhã de hoje
-    condicaoHorario = "(data < ? OR (data = ? AND horario = 'manha'))";
-    params = [dataAtual, dataAtual];
-  } else {
-    // Antes das 7h, remove apenas dias anteriores
-    condicaoHorario = "data < ?";
-    params = [dataAtual];
-  }
+  // Busca todos os agendamentos que podem ter expirado
+  condicaoHorario = "data <= ?";
+  params = [dataAtual];
   
-  const query = `DELETE FROM agendamentos WHERE ${condicaoHorario}`;
+  // Primeiro, busca agendamentos que realmente já passaram
+  const selectQuery = `SELECT * FROM agendamentos WHERE ${condicaoHorario}`;
   
-  db.query(query, params, (err, result) => {
+  db.query(selectQuery, params, (err, results) => {
     if (err) {
-      console.error('Erro ao limpar agendamentos expirados:', err);
-    } else if (result.affectedRows > 0) {
-      console.log(`${result.affectedRows} agendamentos expirados removidos`);
+      console.error('Erro ao buscar agendamentos expirados:', err);
+      return;
+    }
+    
+    if (results.length > 0) {
+      // Filtra apenas os que realmente já passaram
+      const agendamentosExpirados = results.filter(agendamento => {
+        const dataAgendamento = new Date(agendamento.data).toISOString().split('T')[0];
+        
+        // Se é de um dia anterior, já passou
+        if (dataAgendamento < dataAtual) {
+          return true;
+        }
+        
+        // Se é de hoje, verifica o horário
+        if (dataAgendamento === dataAtual) {
+          if (agendamento.horario === 'manha' && horaAtual >= 13) return true;
+          if (agendamento.horario === 'tarde' && horaAtual >= 18) return true;
+          if (agendamento.horario === 'noite' && horaAtual >= 23) return true;
+        }
+        
+        return false;
+      });
+      
+      if (agendamentosExpirados.length > 0) {
+        // Verificar scans incompletos antes de mover para histórico
+        agendamentosExpirados.forEach(agendamento => {
+          verificarESalvarScanIncompleto(db, agendamento);
+        });
+        
+        // Insere no histórico apenas os que realmente expiraram
+        const insertHistoricoQuery = 'INSERT INTO historico_agendamentos (nome, data, horario) VALUES ?';
+        const valores = agendamentosExpirados.map(row => [row.nome, row.data, row.horario]);
+        
+        db.query(insertHistoricoQuery, [valores], (err) => {
+          if (err) {
+            console.error('Erro ao inserir no histórico:', err);
+            return;
+          }
+          
+          // Remove apenas os que foram movidos para o histórico
+          const idsParaRemover = agendamentosExpirados.map(a => a.id);
+          const deleteQuery = `DELETE FROM agendamentos WHERE id IN (${idsParaRemover.map(() => '?').join(',')})`;
+          
+          db.query(deleteQuery, idsParaRemover, (err, result) => {
+            if (err) {
+              console.error('Erro ao limpar agendamentos expirados:', err);
+            } else if (result.affectedRows > 0) {
+              console.log(`${result.affectedRows} agendamentos movidos para histórico`);
+            }
+          });
+        });
+      }
     }
   });
 }
 
 const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'q1w2e3',
-  database: 'easycontrol'
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || 'q1w2e3',
+  database: process.env.DB_NAME || 'easycontrol'
 });
 
 db.connect((err) => {
@@ -61,7 +151,30 @@ db.connect((err) => {
   console.log('Conectado ao MySQL');
 });
 
+// Rota raiz para teste
+app.get('/', (req, res) => {
+  console.log('Rota raiz acessada');
+  res.json({ message: 'Servidor EasyControl rodando', porta: port });
+});
+
+// ROTA DO HISTÓRICO - POSIÇÃO PRIORITÁRIA
+app.get('/api/historico-reservas', (req, res) => {
+  console.log('🔍 Rota historico-reservas acessada');
+  const query = 'SELECT nome, data, horario FROM historico_agendamentos ORDER BY data DESC, horario';
+  
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('❌ Erro ao buscar histórico:', err);
+      return res.status(500).json({ success: false, message: 'Erro interno do servidor' });
+    }
+    
+    console.log(`📊 ${results.length} registros encontrados`);
+    res.json({ success: true, historico: results });
+  });
+});
+
 app.post('/api/login', (req, res) => {
+  console.log('Login recebido');
   const { usuario, senha } = req.body;
   
   const query = 'SELECT * FROM usuarios WHERE usuario = ? AND senha = ?';
@@ -77,6 +190,39 @@ app.post('/api/login', (req, res) => {
     }
   });
 });
+
+app.post('/api/login-supervisor', (req, res) => {
+  const { usuario, senha } = req.body;
+  
+  // Primeiro verifica se o usuário existe na tabela usuarios (não deve existir)
+  const checkUserQuery = 'SELECT * FROM usuarios WHERE usuario = ?';
+  db.query(checkUserQuery, [usuario], (err, userResults) => {
+    if (err) {
+      return res.status(500).json({ error: 'Erro no servidor' });
+    }
+    
+    // Se o usuário existe na tabela usuarios, não pode ser supervisor
+    if (userResults.length > 0) {
+      return res.status(401).json({ success: false, message: 'Acesso negado: usuário não é supervisor' });
+    }
+    
+    // Agora verifica na tabela supervisor
+    const query = 'SELECT * FROM supervisor WHERE usuario = ? AND senha = ?';
+    db.query(query, [usuario, senha], (err, results) => {
+      if (err) {
+        return res.status(500).json({ error: 'Erro no servidor' });
+      }
+      
+      if (results.length > 0) {
+        res.json({ success: true, message: 'Login de supervisor realizado com sucesso' });
+      } else {
+        res.status(401).json({ success: false, message: 'Usuário ou senha inválidos' });
+      }
+    });
+  });
+});
+
+
 
 // Verificar agendamento ativo
 app.get('/api/agendamentos/ativo/:nome', (req, res) => {
@@ -126,112 +272,28 @@ app.get('/api/agendamentos/ativo/:nome', (req, res) => {
   });
 });
 
-// Verificar se scan foi feito para agendamento específico
-app.get('/api/scans/verificar-agendamento/:nome/:data/:horario/:tipo', (req, res) => {
-  const { nome, data, horario, tipo } = req.params;
+
+
+
+
+// Buscar todas as reservas (deve vir antes da rota com parâmetro)
+app.get('/api/agendamentos/todas', (req, res) => {
+  const query = 'SELECT * FROM agendamentos ORDER BY data, horario';
   
-  const query = 'SELECT COUNT(*) as count FROM scans WHERE nome = ? AND data_agendamento = ? AND horario_agendamento = ? AND tipo_scan = ?';
-  
-  db.query(query, [nome, data, horario, tipo], (err, results) => {
+  db.query(query, (err, results) => {
     if (err) {
-      console.error('Erro ao verificar scan do agendamento:', err);
+      console.error('Erro ao buscar todas as reservas:', err);
       return res.status(500).json({ success: false, message: 'Erro interno do servidor' });
     }
     
-    const scanFeito = results[0].count > 0;
-    res.json({ scanFeito });
+    console.log('Reservas encontradas:', results.length);
+    res.json({ success: true, reservas: results });
   });
 });
 
-// Salvar scan
-app.post('/api/scans', (req, res) => {
-  const { nome, tipo_scan, quantidade, data_agendamento, horario_agendamento } = req.body;
-  
-  const agora = new Date();
-  const data = agora.toISOString().split('T')[0];
-  const hora = agora.toTimeString().split(' ')[0];
-  const horaAtual = agora.getHours();
-  
-  let turno;
-  if (horaAtual >= 6 && horaAtual < 12) {
-    turno = 'manha';
-  } else if (horaAtual >= 12 && horaAtual < 18) {
-    turno = 'tarde';
-  } else {
-    turno = 'noite';
-  }
-  
-  const query = 'INSERT INTO scans (nome, tipo_scan, turno, hora_scan, data_scan, quantidade, data_agendamento, horario_agendamento) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-  
-  db.query(query, [nome, tipo_scan, turno, hora, data, quantidade, data_agendamento, horario_agendamento], (err, result) => {
-    if (err) {
-      console.error('Erro ao salvar scan:', err);
-      return res.status(500).json({ success: false, message: 'Erro interno do servidor' });
-    }
-    
-    res.json({ success: true, message: 'Scan salvo com sucesso' });
-  });
-});
 
-// Salvar agendamento
-app.post('/api/agendamentos', (req, res) => {
-  const { nome, data, horario } = req.body;
-  
-  // Limpar agendamentos expirados antes de salvar
-  limparAgendamentosExpirados(db);
-  
-  // Verifica se a data não é anterior ao dia atual
-  const hoje = new Date().toISOString().split('T')[0];
-  if (data < hoje) {
-    return res.status(400).json({ success: false, message: 'Não é possível agendar para datas anteriores' });
-  }
-  
-  // Primeiro verifica se já existe agendamento para essa data e horário
-  const checkQuery = 'SELECT * FROM agendamentos WHERE data = ? AND horario = ?';
-  
-  db.query(checkQuery, [data, horario], (err, results) => {
-    if (err) {
-      console.error('Erro ao verificar agendamento:', err);
-      return res.status(500).json({ success: false, message: 'Erro interno do servidor' });
-    }
-    
-    if (results.length > 0) {
-      return res.status(400).json({ success: false, message: 'Horário já está ocupado' });
-    }
-    
-    // Se não existe, insere o novo agendamento
-    const insertQuery = 'INSERT INTO agendamentos (nome, data, horario) VALUES (?, ?, ?)';
-    
-    db.query(insertQuery, [nome, data, horario], (err, result) => {
-      if (err) {
-        console.error('Erro ao salvar agendamento:', err);
-        return res.status(500).json({ success: false, message: 'Erro interno do servidor' });
-      }
-      
-      res.json({ success: true, message: 'Agendamento salvo com sucesso' });
-    });
-  });
-});
 
-// Verificar horários ocupados
-app.get('/api/agendamentos/:data', (req, res) => {
-  const { data } = req.params;
-  
-  // Limpar agendamentos expirados antes de consultar
-  limparAgendamentosExpirados(db);
-  
-  const query = 'SELECT horario FROM agendamentos WHERE data = ?';
-  
-  db.query(query, [data], (err, results) => {
-    if (err) {
-      console.error('Erro ao buscar agendamentos:', err);
-      return res.status(500).json({ success: false, message: 'Erro interno do servidor' });
-    }
-    
-    const horarios = results.map(row => row.horario);
-    res.json({ success: true, horarios });
-  });
-});
+
 
 // Buscar agendamentos por usuário
 app.get('/api/agendamentos/usuario/:nome', (req, res) => {
@@ -265,14 +327,107 @@ app.delete('/api/agendamentos/:id', (req, res) => {
   });
 });
 
+// Buscar agendamento específico por data e horário
+app.get('/api/agendamentos/buscar/:data/:horario', (req, res) => {
+  const { data, horario } = req.params;
+  
+  const query = 'SELECT * FROM agendamentos WHERE data = ? AND horario = ?';
+  
+  db.query(query, [data, horario], (err, results) => {
+    if (err) {
+      console.error('Erro ao buscar agendamento:', err);
+      return res.status(500).json({ success: false, message: 'Erro interno do servidor' });
+    }
+    
+    if (results.length > 0) {
+      res.json({ success: true, agendamento: results[0] });
+    } else {
+      res.json({ success: false, message: 'Agendamento não encontrado' });
+    }
+  });
+});
+
 // Executar limpeza de agendamentos expirados a cada hora
 setInterval(() => {
   limparAgendamentosExpirados(db);
 }, 60 * 60 * 1000); // 1 hora
 
+
+
+// Rotas Agendamentos
+const agendamentosRoutes = require('./routes/agendamentos');
+app.use('/api/agendamentos', agendamentosRoutes);
+
+// Rotas Gemini
+const geminiRoutes = require('./routes/gemini');
+app.use('/api/gemini', geminiRoutes);
+
+// Buscar scans por usuário, data e turno
+app.get('/api/scans/usuario/:nome/:data/:turno', (req, res) => {
+  const { nome, data, turno } = req.params;
+  
+  const query = `
+    SELECT * FROM scans 
+    WHERE usuario = ? 
+    AND DATE(data_hora) = ?
+    ORDER BY data_hora
+  `;
+  
+  db.query(query, [nome, data], (err, results) => {
+    if (err) {
+      console.error('Erro ao buscar scans:', err);
+      return res.status(500).json({ success: false, message: 'Erro interno do servidor' });
+    }
+    
+    if (results.length === 0) {
+      // Se não há scans, retornar "Não scaneado"
+      res.json({ 
+        success: true, 
+        scans: [{ 
+          usuario: nome, 
+          tipo_scan: 'nenhum', 
+          resultado_scan: 'Não scaneado', 
+          data_hora: data + ' 00:00:00' 
+        }] 
+      });
+    } else {
+      res.json({ success: true, scans: results });
+    }
+  });
+});
+
+// Rotas Scans
+const scansRoutes = require('./routes/scans');
+app.use('/api/scans', scansRoutes);
+
+
+
+
+
+// Rota de teste (modificada para retornar histórico)
+app.get('/api/test', (req, res) => {
+  console.log('Rota de teste acessada - retornando histórico');
+  
+  const query = 'SELECT nome, data, horario FROM historico_agendamentos ORDER BY data DESC, horario';
+  
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Erro ao buscar histórico:', err);
+      return res.json({ success: false, message: 'Erro no banco' });
+    }
+    
+    console.log(`${results.length} registros encontrados no histórico`);
+    res.json({ success: true, historico: results, message: 'Histórico carregado' });
+  });
+});
+
+
+
 // Executar limpeza inicial ao iniciar o servidor
 limparAgendamentosExpirados(db);
 
-app.listen(port, '0.0.0.0', () => {
-  console.log(`Servidor rodando na porta ${port}`);
+const server = app.listen(process.env.PORT || port, () => {
+  console.log(`Servidor rodando na porta ${process.env.PORT || port}`);
 });
+
+module.exports = app;

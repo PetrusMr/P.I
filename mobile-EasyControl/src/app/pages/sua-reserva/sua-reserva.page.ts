@@ -49,13 +49,19 @@ export class SuaReservaPage implements OnInit {
           
           this.agendamentos = agendamentosRelevantes
             .map((ag: any) => {
-              const [ano, mes, dia] = ag.data.split('-');
+              // Tratar data que pode vir como string ISO ou YYYY-MM-DD
+              let dataString = ag.data;
+              if (typeof dataString === 'string' && dataString.includes('T')) {
+                dataString = dataString.split('T')[0]; // Remove parte do tempo se existir
+              }
+              
+              const [ano, mes, dia] = dataString.split('-');
               const data = new Date(parseInt(ano), parseInt(mes) - 1, parseInt(dia));
               const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
               
               // Verifica se pode cancelar baseado no horário (apenas para hoje)
               let podeCancelar = true;
-              if (ag.data === hoje) {
+              if (dataString === hoje) {
                 podeCancelar = false;
                 if ((ag.horario === 'Manhã' || ag.horario === 'manha') && horaAtual < 6) podeCancelar = true;
                 if ((ag.horario === 'Tarde' || ag.horario === 'tarde') && horaAtual < 13) podeCancelar = true;
@@ -67,7 +73,7 @@ export class SuaReservaPage implements OnInit {
                 diaSemana: diasSemana[data.getDay()],
                 data: `${dia}/${mes}`,
                 periodo: ag.horario.charAt(0).toUpperCase() + ag.horario.slice(1),
-                dataCompleta: ag.data,
+                dataCompleta: dataString,
                 horario: ag.horario,
                 podeCancelar: podeCancelar
               };

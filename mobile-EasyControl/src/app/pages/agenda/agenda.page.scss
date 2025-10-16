@@ -156,11 +156,7 @@ ion-button{
     border-radius: 24px;
 }
 
-.dia-medium {
-    --background: #222428 !important;
-    background: #222428 !important;
-    border: 2px solid #666 !important;
-    border-radius: 24px;
+.dia-danger.desabilitado {
     opacity: 0.5;
 }
 

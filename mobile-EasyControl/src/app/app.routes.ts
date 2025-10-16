@@ -17,6 +17,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'home-supervisor',
+    loadComponent: () => import('./pages/home-supervisor/home-supervisor.page').then( m => m.HomeSupervisorPage),
+    canActivate: [authGuard]
+  },
+  {
     path: 'agenda',
     loadComponent: () => import('./pages/agenda/agenda.page').then( m => m.AgendaPage),
     canActivate: [authGuard]
@@ -31,14 +36,26 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/sua-reserva/sua-reserva.page').then( m => m.SuaReservaPage),
     canActivate: [authGuard]
   },
+
+
   {
-    path: 'selecao-modo',
-    loadComponent: () => import('./pages/selecao-modo/selecao-modo.page').then( m => m.SelecaoModoPage),
+    path: 'reservas-supervisor',
+    loadComponent: () => import('./pages/reservas-supervisor/reservas-supervisor.page').then( m => m.ReservasSupervisorPage),
     canActivate: [authGuard]
   },
   {
-    path: 'contador-objetos',
-    loadComponent: () => import('./pages/contador-objetos/contador-objetos.page').then( m => m.ContadorObjetosPage),
+    path: 'controle-sala',
+    loadComponent: () => import('./pages/controle-sala/controle-sala.page').then( m => m.ControleSalaPage),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'historico-supervisor',
+    loadComponent: () => import('./pages/historico-supervisor/historico-supervisor.page').then( m => m.HistoricoSupervisorPage),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'detalhes-scan',
+    loadComponent: () => import('./pages/detalhes-scan/detalhes-scan.page').then( m => m.DetalhesScanPage),
     canActivate: [authGuard]
   }
 ];

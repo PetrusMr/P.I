@@ -1,0 +1,28 @@
+<app-base-page pageTitle="Reservas" [showBackButton]="true" backRoute="/home-supervisor">
+  <ion-card>
+    <ion-card-content>
+      <div class="titulo-calendario">
+        <ion-icon name="calendar-outline" class="calendario-icon"></ion-icon>
+        <ion-button fill="clear" class="botao-data" (click)="toggleCalendario()">
+          {{dataAtual}}
+        </ion-button>
+      </div>
+      
+      <ion-datetime 
+        *ngIf="mostrarCalendario" 
+        presentation="date" 
+        class="calendario-popup"
+        [(ngModel)]="selectedDate"
+        (ionChange)="onDateChange($event)">
+      </ion-datetime>
+
+      <div *ngFor="let reserva of reservas" class="reserva-item">
+        {{reserva.data}} - {{reserva.nome}} - {{reserva.horario}}
+      </div>
+
+      <div *ngIf="reservas.length === 0" class="sem-reservas">
+        Nenhuma reserva encontrada para esta semana
+      </div>
+    </ion-card-content>
+  </ion-card>
+</app-base-page>

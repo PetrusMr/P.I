@@ -1,0 +1,41 @@
+// CÓDIGO FINAL PARA CONECTAR COM O BANCO (após reiniciar servidor)
+
+async carregarHistorico() {
+  const baseDate = this.selectedDate ? new Date(this.selectedDate) : new Date();
+  const diaSemana = baseDate.getDay();
+  const diasParaSegunda = diaSemana === 0 ? -6 : 1 - diaSemana;
+  const inicioSemana = new Date(baseDate);
+  inicioSemana.setDate(baseDate.getDate() + diasParaSegunda);
+  
+  const fimSemana = new Date(inicioSemana);
+  fimSemana.setDate(inicioSemana.getDate() + 4);
+  
+  const dataInicio = inicioSemana.toISOString().split('T')[0];
+  const dataFim = fimSemana.toISOString().split('T')[0];
+  
+  try {
+    const response = await this.http.get<any>(`${environment.apiUrl}/historico-reservas`).toPromise();
+    if (response && response.success && response.historico) {
+      this.historico = response.historico
+        .filter((reserva: any) => {
+          const dataReserva = new Date(reserva.data).toISOString().split('T')[0];
+          return dataReserva >= dataInicio && dataReserva <= dataFim;
+        })
+        .map((reserva: any) => {
+          const [ano, mes, dia] = reserva.data.split('-');
+          return {
+            data: `${dia}/${mes}`,
+            nome: reserva.nome,
+            horario: reserva.horario
+          };
+        });
+    } else {
+      this.historico = [];
+    }
+  } catch (error) {
+    console.error('Erro ao carregar histórico:', error);
+    this.historico = [];
+  }
+}
+
+// SUBSTITUA O CÓDIGO ATUAL POR ESTE APÓS REINICIAR O SERVIDOR

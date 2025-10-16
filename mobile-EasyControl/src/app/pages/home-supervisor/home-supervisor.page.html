@@ -1,0 +1,20 @@
+<app-base-page pageTitle="Home" [showBackButton]="false">
+  <ion-card>
+    <ion-card-content>
+      <h2 class="welcome-title">Bem-vindo, Supervisor!</h2>
+      <p class="welcome-subtitle">Painel de controle do supervisor</p>
+      
+      <div class="supervisor-options">
+        <ion-button expand="block" class="option-button" (click)="verReservas()">
+          <ion-icon name="calendar-outline" slot="start"></ion-icon>
+          Ver Reservas
+        </ion-button>
+        
+        <ion-button expand="block" class="option-button" (click)="verHistorico()">
+          <ion-icon name="time-outline" slot="start"></ion-icon>
+          Ver Histórico
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</app-base-page>

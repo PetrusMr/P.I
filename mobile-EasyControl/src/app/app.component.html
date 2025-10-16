@@ -1,5 +1,6 @@
 <ion-app>
-  <ion-menu contentId="main-content" [disabled]="!isLoggedIn">
+  <!-- Menu para usuários normais -->
+  <ion-menu contentId="main-content" [disabled]="!isLoggedIn || isSupervisor()">
     <ion-header>
       <ion-toolbar color="dark">
         <ion-title>Menu</ion-title>
@@ -15,9 +16,39 @@
           <ion-icon name="calendar" slot="start" class="menu-icon"></ion-icon>
           <ion-label>Agenda</ion-label>
         </ion-item>
-        <ion-item button class="menu-item" (click)="navigateTo('/selecao-modo')">
-          <ion-icon name="camera" slot="start" class="menu-icon"></ion-icon>
-          <ion-label>Scanner</ion-label>
+        <ion-item button class="menu-item" (click)="navigateTo('/controle-sala')">
+          <ion-icon name="scan" slot="start" class="menu-icon"></ion-icon>
+          <ion-label>Scan</ion-label>
+        </ion-item>
+
+      </ion-list>
+      <ion-item button class="menu-item menu-sair" (click)="sair()">
+        <ion-icon name="log-out" slot="start" class="menu-icon"></ion-icon>
+        <ion-label>Sair</ion-label>
+      </ion-item>
+    </ion-content>
+  </ion-menu>
+
+  <!-- Menu específico para supervisores -->
+  <ion-menu contentId="main-content" [disabled]="!isLoggedIn || !isSupervisor()">
+    <ion-header>
+      <ion-toolbar color="dark">
+        <ion-title>Menu</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="menu-content">
+      <ion-list class="menu-list">
+        <ion-item button class="menu-item" (click)="navigateTo('/home-supervisor')">
+          <ion-icon name="home" slot="start" class="menu-icon"></ion-icon>
+          <ion-label>Home</ion-label>
+        </ion-item>
+        <ion-item button class="menu-item" (click)="navigateTo('/reservas-supervisor')">
+          <ion-icon name="calendar-outline" slot="start" class="menu-icon"></ion-icon>
+          <ion-label>Ver Reserva</ion-label>
+        </ion-item>
+        <ion-item button class="menu-item" (click)="navigateTo('/historico-supervisor')">
+          <ion-icon name="time-outline" slot="start" class="menu-icon"></ion-icon>
+          <ion-label>Ver Histórico</ion-label>
         </ion-item>
       </ion-list>
       <ion-item button class="menu-item menu-sair" (click)="sair()">

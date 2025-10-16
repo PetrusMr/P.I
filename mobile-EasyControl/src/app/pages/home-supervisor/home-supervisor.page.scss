@@ -1,0 +1,42 @@
+ion-app, ion-content {
+    background-color: #222428;
+    --background: #222428 !important;
+}
+
+ion-card-content, ion-card {
+    background-color: #222428;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 8px;
+    border: 2px solid rgb(72, 172, 255);
+}
+
+.welcome-title {
+    color: rgb(72, 172, 255);
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.welcome-subtitle {
+    color: #969696;
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.supervisor-options {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.option-button {
+    --background: transparent !important;
+    --background-activated: transparent !important;
+    --background-focused: transparent !important;
+    --background-hover: transparent !important;
+    --color: rgb(72, 172, 255);
+    border: 2px solid rgb(72, 172, 255);
+    border-radius: 32px;
+    font-size: 16px;
+    padding: 12px 24px;
+}
