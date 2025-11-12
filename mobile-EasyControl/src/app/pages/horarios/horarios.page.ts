@@ -157,22 +157,26 @@ export class HorariosPage implements OnInit {
   }
 
   salvarAgendamento(periodo: string) {
-    const usuarioLogado = localStorage.getItem('usuarioLogado') || 'Usuário';
+    const usuarioLogado = localStorage.getItem('usuarioLogado') || 'user1';
     const dataFormatada = `${this.dataAtual}`;
+    
+    localStorage.setItem('usuarioLogado', usuarioLogado);
     
     this.agendamentoService.salvarAgendamento(usuarioLogado, dataFormatada, periodo).subscribe({
       next: (response) => {
+        console.log('✅ Resposta do salvamento:', response);
         if (response.success) {
           console.log('Agendamento salvo com sucesso');
         }
       },
       error: (error) => {
-        console.error('Erro ao salvar agendamento:', error);
+        console.error('❌ Erro ao salvar agendamento:', error);
         if (error.status === 400) {
-          // Recarrega os horários para atualizar o estado
           this.verificarHorariosOcupados();
         }
       }
     });
   }
+
+
 }

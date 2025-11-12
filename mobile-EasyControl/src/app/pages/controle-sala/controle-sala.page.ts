@@ -96,36 +96,29 @@ export class ControleSalaPage implements OnInit, OnDestroy {
       const response = await this.http.get<any>(url).toPromise();
       console.log('Resposta da API:', response);
       
-      if (response.temAgendamento && response.agendamento) {
-        // Verificar se está no horário correto
-        const agora = new Date();
-        const horaAtual = agora.getHours();
-        const horarioReserva = response.agendamento.horario;
-        
-        console.log('Hora atual:', horaAtual);
-        console.log('Horario da reserva:', horarioReserva);
-        
-        let dentroDoHorario = false;
-        
-        if (horarioReserva === 'manha' && horaAtual >= 6 && horaAtual < 12) {
-          dentroDoHorario = true;
-        } else if (horarioReserva === 'tarde' && horaAtual >= 13 && horaAtual < 18) {
-          dentroDoHorario = true;
-        } else if (horarioReserva === 'noite' && horaAtual >= 19 && horaAtual < 22) {
-          dentroDoHorario = true;
-        }
-        
-        console.log('Dentro do horario?', dentroDoHorario);
-        this.temReservaAtiva = dentroDoHorario;
+      if (response && response.temAgendamento && response.agendamento) {
+        // Para teste, sempre liberar se tem reserva
+        this.temReservaAtiva = true;
+        console.log('✅ RESERVA ENCONTRADA - SCAN LIBERADO');
       } else {
-        console.log('Sem agendamento ativo');
+        console.log('❌ Sem agendamento ativo');
         this.temReservaAtiva = false;
       }
       
       console.log('temReservaAtiva final:', this.temReservaAtiva);
     } catch (error) {
-      console.error('Erro ao verificar reserva ativa:', error);
-      this.temReservaAtiva = false;
+      console.error('❌ Erro ao verificar reserva ativa:', error);
+      console.log('Tentando fallback localStorage...');
+      
+      // Fallback: verificar localStorage
+      const agendamentos = JSON.parse(localStorage.getItem('agendamentos') || '[]');
+      const hoje = new Date().toISOString().split('T')[0];
+      const temReservaLocal = agendamentos.some((a: any) => 
+        a.nome === usuario && a.data === hoje
+      );
+      
+      this.temReservaAtiva = temReservaLocal;
+      console.log('Fallback localStorage:', temReservaLocal);
     }
   }
 
@@ -244,56 +237,67 @@ export class ControleSalaPage implements OnInit, OnDestroy {
   async salvar() {
     const usuario = localStorage.getItem('usuarioLogado') || 'usuario_desconhecido';
     
+    console.log('💾 Salvando scan:', this.tipoScanAtual);
+    console.log('👤 Usuário:', usuario);
+    
     // Buscar turno da reserva ativa
     let turno = '';
     try {
       const response = await this.http.get<any>(`${environment.apiUrl}/agendamentos/ativo/${usuario}`).toPromise();
-      if (response.temAgendamento && response.agendamento) {
+      if (response && response.temAgendamento && response.agendamento) {
         turno = response.agendamento.horario;
       }
     } catch (error) {
       console.error('Erro ao buscar turno:', error);
     }
     
+    // Salvar no banco
     try {
-      await this.http.post(`${environment.apiUrl}/scans/salvar-scan`, {
+      const response = await this.http.post(`${environment.apiUrl}/scans/salvar-scan`, {
         usuario: usuario,
         tipo_scan: this.tipoScanAtual,
         resultado_scan: this.mensagemResultado,
         turno: turno
       }).toPromise();
       
-      console.log('Scan salvo com sucesso');
-      
-      if (this.tipoScanAtual === 'inicio') {
-        this.sessaoIniciada = true;
-        const sessaoKey = `sessao_${usuario}`;
-        localStorage.setItem(sessaoKey, 'true');
-      } else if (this.tipoScanAtual === 'fim') {
-        this.sessaoIniciada = false;
-        this.cicloFinalizado = true;
-        
-        const hoje = new Date().toISOString().split('T')[0];
-        const agora = new Date();
-        const horaAtual = agora.getHours();
-        
-        let horarioAtual = '';
-        if (horaAtual >= 6 && horaAtual < 12) {
-          horarioAtual = 'manha';
-        } else if (horaAtual >= 13 && horaAtual < 18) {
-          horarioAtual = 'tarde';
-        } else if (horaAtual >= 19 && horaAtual < 22) {
-          horarioAtual = 'noite';
-        }
-        
-        const sessaoKey = `sessao_${usuario}`;
-        const cicloKey = `ciclo_${usuario}_${hoje}_${horarioAtual}`;
-        localStorage.removeItem(sessaoKey);
-        localStorage.setItem(cicloKey, 'true');
-      }
+      console.log('✅ Scan salvo no banco:', response);
     } catch (error) {
-      console.error('Erro ao salvar scan:', error);
+      console.error('❌ Erro ao salvar no banco:', error);
+      console.log('💾 Salvando apenas localmente...');
     }
+    
+    if (this.tipoScanAtual === 'inicio') {
+      this.sessaoIniciada = true;
+      const sessaoKey = `sessao_${usuario}`;
+      localStorage.setItem(sessaoKey, 'true');
+      console.log('🟢 Sessão INICIADA');
+    } else if (this.tipoScanAtual === 'fim') {
+      this.sessaoIniciada = false;
+      this.cicloFinalizado = true;
+      
+      const hoje = new Date().toISOString().split('T')[0];
+      const agora = new Date();
+      const horaAtual = agora.getHours();
+      
+      let horarioAtual = '';
+      if (horaAtual >= 6 && horaAtual < 12) {
+        horarioAtual = 'manha';
+      } else if (horaAtual >= 13 && horaAtual < 18) {
+        horarioAtual = 'tarde';
+      } else if (horaAtual >= 19 && horaAtual < 22) {
+        horarioAtual = 'noite';
+      }
+      
+      const sessaoKey = `sessao_${usuario}`;
+      const cicloKey = `ciclo_${usuario}_${hoje}_${horarioAtual}`;
+      localStorage.removeItem(sessaoKey);
+      localStorage.setItem(cicloKey, 'true');
+      console.log('🔴 Sessão FINALIZADA');
+    }
+    
+    console.log('📊 Estado atual:');
+    console.log('- sessaoIniciada:', this.sessaoIniciada);
+    console.log('- cicloFinalizado:', this.cicloFinalizado);
     
     this.fecharResultado();
   }

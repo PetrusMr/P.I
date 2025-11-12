@@ -65,49 +65,56 @@ export class ReservasSupervisorPage implements OnInit, OnDestroy {
   }
 
   carregarReservas() {
-    // Calcular semana atual (segunda a sexta)
-    const baseDate = this.selectedDate ? new Date(this.selectedDate) : new Date();
-    const diaSemana = baseDate.getDay();
-    const diasParaSegunda = diaSemana === 0 ? -6 : 1 - diaSemana;
-    const inicioSemana = new Date(baseDate);
-    inicioSemana.setDate(baseDate.getDate() + diasParaSegunda);
-    
-    const fimSemana = new Date(inicioSemana);
-    fimSemana.setDate(inicioSemana.getDate() + 4);
-    
-    const dataInicio = inicioSemana.toISOString().split('T')[0];
-    const dataFim = fimSemana.toISOString().split('T')[0];
-    
     this.agendamentoService.buscarTodasReservas().subscribe({
       next: (response) => {
         console.log('Resposta todas reservas:', response);
-        console.log('Filtro semana:', { dataInicio, dataFim });
-        if (response.success) {
-          const reservasFiltradas = response.reservas
-            .filter((reserva: any) => reserva.data >= dataInicio && reserva.data <= dataFim);
-          console.log('Reservas filtradas:', reservasFiltradas);
-          
-          this.reservas = reservasFiltradas.map((reserva: any) => {
-              // Tratar data que pode vir como string ISO
-              let dataString = reserva.data;
-              if (typeof dataString === 'string' && dataString.includes('T')) {
-                dataString = dataString.split('T')[0];
-              }
-              
-              const [ano, mes, dia] = dataString.split('-');
-              return {
-                data: `${dia}/${mes}`,
-                nome: reserva.nome,
-                horario: reserva.horario
-              };
-            });
+        if (response.success && response.reservas) {
+          this.reservas = response.reservas.map((reserva: any) => {
+            let dataString = reserva.data;
+            if (typeof dataString === 'string' && dataString.includes('T')) {
+              dataString = dataString.split('T')[0];
+            }
+            
+            const [ano, mes, dia] = dataString.split('-');
+            return {
+              id: reserva.id,
+              data: `${dia}/${mes}/${ano}`,
+              nome: reserva.nome,
+              horario: reserva.horario
+            };
+          });
           console.log('Reservas processadas:', this.reservas);
+        } else {
+          this.carregarReservasLocal();
         }
       },
       error: (error) => {
         console.error('Erro ao carregar reservas:', error);
-        this.reservas = [];
+        this.carregarReservasLocal();
       }
     });
+  }
+
+  carregarReservasLocal() {
+    const agendamentos = JSON.parse(localStorage.getItem('agendamentos') || '[]');
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    
+    this.reservas = agendamentos
+      .filter((agendamento: any) => {
+        const dataAgendamento = new Date(agendamento.data);
+        return dataAgendamento >= hoje;
+      })
+      .map((agendamento: any) => {
+        const [ano, mes, dia] = agendamento.data.split('-');
+        return {
+          id: agendamento.id || Date.now(),
+          data: `${dia}/${mes}/${ano}`,
+          nome: agendamento.nome,
+          horario: agendamento.horario
+        };
+      });
+    
+    console.log('Reservas do localStorage:', this.reservas);
   }
 }

@@ -37,7 +37,7 @@ export class SuaReservaPage implements OnInit {
   }
 
   carregarAgendamentos() {
-    const usuarioLogado = localStorage.getItem('usuarioLogado') || 'Usuario';
+    const usuarioLogado = localStorage.getItem('usuarioLogado') || 'user1';
     const hoje = new Date().toISOString().split('T')[0];
     const horaAtual = new Date().getHours();
     
@@ -109,6 +109,10 @@ export class SuaReservaPage implements OnInit {
     }
     this.mostrarConfirmacao = false;
   }
+
+
+
+
 
   fecharConfirmacao() {
     this.mostrarConfirmacao = false;

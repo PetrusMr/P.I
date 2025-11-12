@@ -122,3 +122,25 @@ ion-menu-button {
   text-align: center;
   align-items: center;
 }
+
+.custom-icon {
+  width: 600px;
+  height: auto;
+  transition: all 0.3s ease;
+  object-fit: contain;
+  margin: 5px;
+  filter: invert(1) brightness(0.5);
+}
+
+.custom-icon:hover {
+  transform: scale(1.02);
+  box-shadow: none;
+}
+
+.carregar ion-button {
+  --box-shadow: none;
+}
+
+.carregar ion-button:hover {
+  --box-shadow: none;
+}

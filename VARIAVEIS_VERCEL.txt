@@ -1,0 +1,26 @@
+CONFIGURAÇÃO DAS VARIÁVEIS DE AMBIENTE NO VERCEL
+================================================
+
+Acesse: https://vercel.com/dashboard
+Vá para seu projeto → Settings → Environment Variables
+
+Adicione estas variáveis:
+
+DB_HOST=sql10.freesqldatabase.com
+DB_USER=sql10803107
+DB_PASSWORD=88SgnTeTdQ
+DB_NAME=sql10803107
+DB_PORT=3306
+GEMINI_API_KEY=AIzaSyD61brqsqzlZMLszfWh791tfHM7bURVT-0
+
+IMPORTANTE:
+- Substitua "sua_senha_do_email_freesql" pela senha real que você recebeu no email
+- Após adicionar as variáveis, clique em "Redeploy" no Vercel
+- Teste a URL: https://back-end-requtluwk-petrusmrs-projects.vercel.app/api/test
+
+CONFIGURAÇÃO COMPLETA:
+1. ✅ Banco de dados criado no FreeSQLDatabase
+2. ✅ Tabelas criadas
+3. ✅ App Ionic configurado para usar Vercel
+4. ⏳ Falta: Configurar variáveis no Vercel
+5. ⏳ Falta: Testar funcionamento

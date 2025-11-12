@@ -32,7 +32,8 @@ export class HomePage {
 
 
   async abrirGaleria() {
-    this.router.navigate(['/controle-sala']);
+    // Ícone desabilitado - sem redirecionamento
+    console.log('Ícone de galeria clicado - sem ação');
   }
 
   isActionSheetOpen = false;

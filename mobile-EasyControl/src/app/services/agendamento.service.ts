@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -27,17 +28,15 @@ export class AgendamentoService {
     return this.http.get(`${this.apiUrl}/agendamentos/usuario/${nome}`);
   }
 
-  cancelarAgendamento(id: number): Observable<any> {
+  cancelarAgendamento(id: number | string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/agendamentos/${id}`);
   }
-
-
 
   buscarAgendamentoPorDataHorario(data: string, horario: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/agendamentos/buscar/${data}/${horario}`);
   }
 
   buscarTodasReservas(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/agendamentos/todas`);
+    return this.http.get(`${this.apiUrl}/reservas`);
   }
 }

@@ -1,7 +1,17 @@
-# Manter apenas mobile-EasyControl
-# Ignorar tudo exceto mobile-EasyControl
-*
-!mobile-EasyControl/
-!mobile-EasyControl/**
-!.gitignore
-!README.md
+# Dependências
+node_modules/
+
+# Build
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
