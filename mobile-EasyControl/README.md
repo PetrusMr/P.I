@@ -47,7 +47,7 @@ ionic capacitor run android
 - `/src/app/shared` - Componentes compartilhados
 
 
-
+backend em : https://github.com/PetrusMr/BackEnd-PI
 
  
 Projeto: Easy Control
