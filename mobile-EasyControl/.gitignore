@@ -26,3 +26,21 @@ ios/App/App/public/
 # OS
 .DS_Store
 Thumbs.db
+
+# Arquivos de teste (evitar commit acidental)
+test_*
+test-*
+*_teste.*
+*-teste.*
+testar_*
+verificar_*
+debug_*
+criar_*
+limpar_*
+inserir_*
+*.txt
+teste-*.html
+
+# Arquivos temporários
+*.tmp
+*.temp
