@@ -32,21 +32,19 @@ export class DetalhesScanPage implements OnInit {
 
   async carregarScans() {
     try {
-      const response = await this.http.get<any>(`${environment.apiUrl}/scans/historico`).toPromise();
-      if (response.success) {
-        this.scans = response.historico.filter((scan: any) => {
-          const dataScan = scan.data_hora.split('T')[0];
-          return scan.usuario === this.usuario && 
-                 dataScan === this.data && 
-                 scan.turno === this.turno;
-        }).sort((a: any, b: any) => {
+      const response = await this.http.get<any>(`${environment.apiUrl}/scans/usuario/${this.usuario}/${this.data}/${this.turno}`).toPromise();
+      if (response.success && response.scans) {
+        this.scans = response.scans.sort((a: any, b: any) => {
           if (a.tipo_scan === 'inicio' && b.tipo_scan === 'fim') return -1;
           if (a.tipo_scan === 'fim' && b.tipo_scan === 'inicio') return 1;
           return 0;
         });
+      } else {
+        this.scans = [];
       }
     } catch (error) {
       console.error('Erro ao carregar scans:', error);
+      this.scans = [];
     }
   }
 

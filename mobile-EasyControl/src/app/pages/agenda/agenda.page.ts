@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { IonIcon, IonButton, IonCard, IonCardContent, IonItem, IonLabel, IonDatetime } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -15,11 +15,13 @@ import { AgendamentoService } from '../../services/agendamento.service';
   styleUrls: ['agenda.page.scss'],
   imports: [BasePageComponent, IonIcon, IonButton, IonCard, IonCardContent, IonItem, IonLabel, IonDatetime, CommonModule, FormsModule],
 })
-export class AgendaPage implements OnInit {
+export class AgendaPage implements OnInit, OnDestroy {
   selectedDate = new Date().toISOString();
   diasSemana: any[] = [];
   mostrarCalendario = false;
   dataAtual = '';
+  private intervalId: any;
+  private ultimaVerificacao: { [key: string]: number } = {};
 
   ngOnInit() {
     this.gerarDiasSemana();
@@ -28,11 +30,15 @@ export class AgendaPage implements OnInit {
 
   ionViewWillEnter() {
     this.verificarDisponibilidade();
-    
-    // Atualizar disponibilidade a cada minuto
-    setInterval(() => {
-      this.verificarDisponibilidade();
-    }, 60000);
+    this.intervalId = setInterval(() => {
+      this.verificarMudancas();
+    }, 2000);
+  }
+
+  ngOnDestroy() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
   }
 
   atualizarDataAtual(dataBase?: string) {
@@ -171,9 +177,46 @@ export class AgendaPage implements OnInit {
     this.router.navigate(['/home']);
   }
 
+  verificarMudancas() {
+    this.diasSemana.forEach(dia => {
+      if (!dia.desabilitado) {
+        this.agendamentoService.verificarHorariosOcupados(dia.dataCompleta).subscribe({
+          next: (response) => {
+            const horariosOcupados = response.success ? response.horarios.length : 0;
+            const chave = dia.dataCompleta;
+            
+            if (this.ultimaVerificacao[chave] !== horariosOcupados) {
+              this.ultimaVerificacao[chave] = horariosOcupados;
+              this.atualizarCorDia(dia, horariosOcupados);
+            }
+          }
+        });
+      }
+    });
+  }
+
+  atualizarCorDia(dia: any, horariosOcupados: number) {
+    const hoje = new Date().toISOString().split('T')[0];
+    const horaAtual = new Date().getHours();
+    
+    if (dia.dataCompleta === hoje) {
+      if (horaAtual >= 7) horariosOcupados++;
+      if (horaAtual >= 13) horariosOcupados++;
+      if (horaAtual >= 18) horariosOcupados++;
+    }
+    
+    if (horariosOcupados === 0) {
+      dia.cor = 'success';
+    } else if (horariosOcupados >= 3) {
+      dia.cor = 'danger';
+    } else {
+      dia.cor = 'warning';
+    }
+  }
+
   irParaHorarios(dia: any) {
     if (dia.desabilitado) {
-      return; // Não permite navegar para datas anteriores
+      return;
     }
     
     console.log('Clicou no dia:', dia);

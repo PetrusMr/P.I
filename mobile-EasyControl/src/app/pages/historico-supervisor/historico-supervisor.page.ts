@@ -32,7 +32,7 @@ export class HistoricoSupervisorPage implements OnInit, OnDestroy {
     this.carregarHistorico();
     this.intervalId = setInterval(() => {
       this.carregarHistorico();
-    }, 10000);
+    }, 1000);
   }
 
   ngOnDestroy() {
@@ -85,15 +85,28 @@ export class HistoricoSupervisorPage implements OnInit, OnDestroy {
         
         // Filtrar por semana
         const historicoFiltrado = response.historico.filter((reserva: any) => {
-          const dataReserva = new Date(reserva.data).toISOString().split('T')[0];
+          let dataReserva;
+          if (typeof reserva.data === 'string') {
+            dataReserva = reserva.data.split('T')[0];
+          } else {
+            // Se for um objeto Date, converter para string no formato correto
+            const date = new Date(reserva.data);
+            dataReserva = date.toISOString().split('T')[0];
+          }
           return dataReserva >= dataInicio && dataReserva <= dataFim;
         });
         
         // Converter formato da data
         this.historico = historicoFiltrado.map((reserva: any) => {
-          const data = new Date(reserva.data);
-          const dia = data.getDate().toString().padStart(2, '0');
-          const mes = (data.getMonth() + 1).toString().padStart(2, '0');
+          let dataString;
+          if (typeof reserva.data === 'string') {
+            dataString = reserva.data.split('T')[0]; // yyyy-mm-dd
+          } else {
+            // Se for um objeto Date, converter para string no formato correto
+            const date = new Date(reserva.data);
+            dataString = date.toISOString().split('T')[0];
+          }
+          const [ano, mes, dia] = dataString.split('-');
           return {
             data: `${dia}/${mes}`,
             nome: reserva.nome,

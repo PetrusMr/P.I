@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonCard, IonCardContent, IonButton, IonIcon } from '@ionic/angular/standalone';
@@ -16,13 +16,15 @@ import { AgendamentoService } from '../../services/agendamento.service';
   standalone: true,
   imports: [BasePageComponent, IonCard, IonCardContent, IonButton, IonIcon, CommonModule, FormsModule]
 })
-export class HorariosPage implements OnInit {
+export class HorariosPage implements OnInit, OnDestroy {
   dataSelecionada = 'Dia 01/05/2025';
   diaAtual = '';
   dataAtual = '';
   mostrarConfirmacao = false;
   mensagemConfirmacao = '';
   periodoSelecionado = '';
+  private intervalId: any;
+  private ultimoStatus: string = '';
   
   periodos = {
     manha: { disponivel: true, ocupado: false },
@@ -53,10 +55,15 @@ export class HorariosPage implements OnInit {
       }
     });
     
-    // Atualizar a cada minuto para verificar horários expirados
-    setInterval(() => {
-      this.verificarPeriodosExpirados();
-    }, 60000);
+    this.intervalId = setInterval(() => {
+      this.verificarMudancasHorarios();
+    }, 2000);
+  }
+
+  ngOnDestroy() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
   }
 
   verificarHorariosOcupados() {
@@ -133,6 +140,38 @@ export class HorariosPage implements OnInit {
       this.periodos.noite.ocupado = true;
     }
     // Para datas futuras, manter todos disponíveis (serão verificados pela API)
+  }
+
+  verificarMudancasHorarios() {
+    if (!this.dataAtual || this.mostrarConfirmacao) {
+      return;
+    }
+    
+    this.agendamentoService.verificarHorariosOcupados(this.dataAtual).subscribe({
+      next: (response) => {
+        const statusAtual = JSON.stringify(response.horarios || []);
+        
+        if (this.ultimoStatus !== statusAtual) {
+          this.ultimoStatus = statusAtual;
+          this.atualizarPeriodos(response.horarios || []);
+        }
+      }
+    });
+  }
+
+  atualizarPeriodos(horariosOcupados: string[]) {
+    this.periodos.manha = { disponivel: true, ocupado: false };
+    this.periodos.tarde = { disponivel: true, ocupado: false };
+    this.periodos.noite = { disponivel: true, ocupado: false };
+    
+    this.verificarPeriodosExpirados();
+    
+    horariosOcupados.forEach((horario: string) => {
+      if (this.periodos[horario as keyof typeof this.periodos]) {
+        this.periodos[horario as keyof typeof this.periodos].ocupado = true;
+        this.periodos[horario as keyof typeof this.periodos].disponivel = false;
+      }
+    });
   }
 
   selecionarPeriodo(periodo: string) {

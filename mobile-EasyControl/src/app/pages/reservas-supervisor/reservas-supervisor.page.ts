@@ -30,7 +30,7 @@ export class ReservasSupervisorPage implements OnInit, OnDestroy {
     this.carregarReservas();
     this.intervalId = setInterval(() => {
       this.carregarReservas();
-    }, 10000);
+    }, 1000);
   }
 
   ngOnDestroy() {

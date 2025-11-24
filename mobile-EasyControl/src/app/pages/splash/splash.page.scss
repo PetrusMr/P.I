@@ -16,6 +16,22 @@
   height: 100%;
   object-fit: cover;
   background: #000;
+  
+  &::-webkit-media-controls {
+    display: none !important;
+  }
+  
+  &::-webkit-media-controls-panel {
+    display: none !important;
+  }
+  
+  &::-webkit-media-controls-play-button {
+    display: none !important;
+  }
+  
+  &::-webkit-media-controls-start-playback-button {
+    display: none !important;
+  }
 }
 
 .skip-button {

@@ -19,19 +19,12 @@ export class SplashPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.platform.ready().then(() => {
-      this.playVideo();
-    });
+    this.playVideo();
   }
 
   playVideo() {
     const video = this.videoPlayer.nativeElement;
     
-    video.play().catch(error => {
-      console.log('Erro ao reproduzir vídeo:', error);
-      this.goToLogin();
-    });
-
     video.addEventListener('ended', () => {
       this.goToLogin();
     });

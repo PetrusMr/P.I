@@ -187,12 +187,12 @@ export class ControleSalaPage implements OnInit, OnDestroy {
   private async abrirCamera() {
     try {
       const image = await Camera.getPhoto({
-        quality: 30,
+        quality: 80,
         allowEditing: false,
         resultType: CameraResultType.Base64,
         source: CameraSource.Camera,
-        width: 800,
-        height: 600
+        width: 1024,
+        height: 768
       });
       
       if (image.base64String) {
@@ -215,12 +215,41 @@ export class ControleSalaPage implements OnInit, OnDestroy {
     await loading.present();
 
     try {
+      console.log('🔍 Iniciando análise da imagem...');
+      console.log('Tamanho base64:', base64.length);
+      console.log('API URL:', environment.apiUrl);
+      
       const resultado = await this.geminiService.analisarComponentes(base64);
+      console.log('✅ Resultado recebido:', resultado);
+      console.log('Tipo do resultado:', typeof resultado);
       await loading.dismiss();
-      this.mostrarPopup(resultado, false);
+      
+      // Verificar se o resultado contém "Nenhum componente" ou está vazio
+      if (!resultado || 
+          resultado.trim() === '' || 
+          resultado.trim().length < 3 ||
+          resultado.toLowerCase().includes('nenhum componente') ||
+          resultado.toLowerCase().includes('não consegui identificar') ||
+          resultado.toLowerCase().includes('não foi possível')) {
+        console.log('❌ Nenhum componente identificado:', resultado);
+        this.mostrarPopup('Nenhum componente eletrônico identificado na imagem. Certifique-se de que há componentes visíveis e bem iluminados, depois tente novamente.', true);
+      } else {
+        console.log('✅ Mostrando resultado:', resultado);
+        this.mostrarPopup(resultado, false);
+      }
     } catch (error: any) {
+      console.error('❌ Erro na análise:', error);
+      console.error('Stack trace:', error.stack);
       await loading.dismiss();
-      this.mostrarPopup(error.message || 'Erro desconhecido. Tente novamente.', true);
+      
+      let mensagemErro = 'Erro ao analisar imagem. Tente novamente.';
+      if (error.message && error.message.includes('network')) {
+        mensagemErro = 'Erro de conexão. Verifique sua internet e tente novamente.';
+      } else if (error.message && error.message.includes('timeout')) {
+        mensagemErro = 'Tempo limite excedido. Tente novamente.';
+      }
+      
+      this.mostrarPopup(mensagemErro, true);
     }
   }
 
